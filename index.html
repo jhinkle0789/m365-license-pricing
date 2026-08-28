@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microsoft 365 License Pricing</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: #f3f4f6;
+      color: #1f2937;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    header { margin-bottom: 2rem; }
+    header h1 { font-size: 1.75rem; font-weight: 700; color: #0f172a; }
+    header p  { margin-top: 0.4rem; font-size: 0.9rem; color: #6b7280; }
+
+    .section-title {
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      color: #6b7280; margin: 2rem 0 0.75rem;
+    }
+
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: 0.25rem; margin-bottom: 1.5rem; border-bottom: 2px solid #e5e7eb; }
+    .tab-btn {
+      padding: 0.6rem 1.2rem; font-size: 0.875rem; font-weight: 600;
+      border: none; background: none; cursor: pointer; color: #6b7280;
+      border-bottom: 2px solid transparent; margin-bottom: -2px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .tab-btn.active { color: #2563eb; border-bottom-color: #2563eb; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Tier badges ── */
+    .badge {
+      font-size: 0.67rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; padding: 0.15rem 0.45rem; border-radius: 4px;
+      white-space: nowrap;
+    }
+    .badge-frontline  { background: #d1fae5; color: #065f46; }
+    .badge-business   { background: #dbeafe; color: #1d4ed8; }
+    .badge-enterprise { background: #ede9fe; color: #6d28d9; }
+    .badge-addon      { background: #fef3c7; color: #92400e; }
+    .badge-o365       { background: #fee2e2; color: #991b1b; }
+
+    /* ── Client Planner ── */
+    .planner-header {
+      display: flex; align-items: flex-end; gap: 1rem; flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+    .field-group { display: flex; flex-direction: column; gap: 0.3rem; }
+    .field-group label { font-size: 0.78rem; font-weight: 600; color: #374151; }
+    .field-group input {
+      padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 8px;
+      font-size: 0.9rem; font-family: inherit; outline: none;
+      transition: border-color 0.15s;
+    }
+    .field-group input:focus { border-color: #2563eb; }
+
+    .planner-cat-title {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #9ca3af;
+      padding: 0.6rem 0 0.3rem; margin-top: 0.5rem;
+    }
+
+    .license-rows { display: flex; flex-direction: column; gap: 0.4rem; }
+    .license-row {
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 8px;
+      padding: 0.7rem 1rem; display: flex; align-items: center; gap: 0.75rem;
+      flex-wrap: wrap; transition: border-color 0.15s;
+    }
+    .license-row.checked { border-color: #93c5fd; background: #f0f7ff; }
+    .license-row input[type="checkbox"] { width: 1rem; height: 1rem; accent-color: #2563eb; cursor: pointer; flex-shrink: 0; }
+    .lr-name { flex: 1 1 200px; font-weight: 600; font-size: 0.85rem; color: #111827; }
+    .lr-price { font-size: 0.82rem; color: #6b7280; white-space: nowrap; }
+    .lr-seats-wrap { display: flex; align-items: center; gap: 0.4rem; }
+    .lr-seats-wrap label { font-size: 0.78rem; color: #6b7280; }
+    .lr-seats {
+      width: 65px; padding: 0.3rem 0.45rem; border: 1px solid #d1d5db;
+      border-radius: 6px; font-size: 0.82rem; text-align: center; font-family: inherit;
+    }
+    .lr-subtotal { font-size: 0.82rem; font-weight: 700; color: #1d4ed8; min-width: 90px; text-align: right; }
+
+    .summary-bar {
+      margin-top: 1.25rem; background: #1e293b; color: #f8fafc;
+      border-radius: 10px; padding: 1rem 1.25rem;
+      display: flex; gap: 2rem; flex-wrap: wrap; align-items: center;
+    }
+    .summary-stat { display: flex; flex-direction: column; gap: 0.1rem; }
+    .summary-stat span:first-child { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.07em; color: #94a3b8; }
+    .summary-stat span:last-child { font-size: 1.25rem; font-weight: 800; }
+    .summary-name { margin-left: auto; font-size: 0.85rem; color: #94a3b8; font-style: italic; }
+
+    .compare-btn-wrap { margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .btn {
+      padding: 0.55rem 1.2rem; border-radius: 8px; border: none;
+      font-size: 0.875rem; font-weight: 600; cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-primary:disabled { opacity: 0.4; cursor: default; }
+
+    /* ── Comparison Table ── */
+    #compare-section { margin-top: 0.5rem; }
+    #compare-section h2 { font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem; }
+
+    .compare-table-wrap { overflow-x: auto; }
+    table.compare {
+      width: 100%; border-collapse: collapse;
+      background: #fff; border-radius: 12px; overflow: hidden;
+      border: 1px solid #e5e7eb; font-size: 0.82rem;
+    }
+    table.compare th, table.compare td {
+      padding: 0.6rem 0.85rem; text-align: center;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    table.compare th { background: #f8fafc; font-weight: 700; color: #374151; vertical-align: bottom; }
+    table.compare th.feature-col { text-align: left; min-width: 180px; }
+    table.compare td.feature-col { text-align: left; color: #374151; }
+    table.compare tr:last-child td { border-bottom: none; }
+    table.compare tbody tr:hover td { background: #f9fafb; }
+    table.compare .cat-row td {
+      background: #f1f5f9; font-weight: 700; font-size: 0.7rem;
+      text-transform: uppercase; letter-spacing: 0.07em; color: #64748b;
+      text-align: left;
+    }
+    .check-yes     { color: #10b981; font-size: 1rem; }
+    .check-no      { color: #d1d5db; font-size: 1rem; }
+    .check-partial { color: #f59e0b; font-size: 0.75rem; font-weight: 700; }
+    .col-yes  { background: #f0fdf4 !important; }
+    .col-part { background: #fffbeb !important; }
+
+    /* ── Pricing Cards ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      background: #fff; border-radius: 12px; padding: 1.4rem;
+      border: 1px solid #e5e7eb; display: flex; flex-direction: column;
+      gap: 0.7rem; transition: box-shadow 0.15s;
+    }
+    .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+    .card-name { font-size: 1rem; font-weight: 700; color: #111827; line-height: 1.3; }
+    .card-price { display: flex; align-items: baseline; gap: 0.25rem; }
+    .price-amount { font-size: 1.9rem; font-weight: 800; color: #0f172a; }
+    .price-suffix { font-size: 0.82rem; color: #6b7280; }
+    .card-divider { border: none; border-top: 1px solid #f3f4f6; }
+    .card-features { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
+    .card-features li { font-size: 0.82rem; color: #374151; padding-left: 1.1rem; position: relative; }
+    .card-features li::before { content: "✓"; position: absolute; left: 0; color: #10b981; font-weight: 700; }
+    .card-note { font-size: 0.72rem; color: #9ca3af; margin-top: auto; }
+    .card-req  { font-size: 0.72rem; color: #f59e0b; font-weight: 600; margin-top: auto; }
+
+    footer { margin: 2.5rem 0 0; font-size: 0.78rem; color: #9ca3af; }
+    footer a { color: #9ca3af; }
+
+    /* ── Billing selector ── */
+    .billing-bar {
+      display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+      padding: 0.65rem 1rem; margin-bottom: 1.5rem;
+    }
+    .billing-bar span { font-size: 0.8rem; font-weight: 600; color: #374151; margin-right: 0.25rem; }
+    .billing-opt {
+      display: flex; align-items: center; gap: 0.35rem;
+      padding: 0.35rem 0.75rem; border-radius: 6px; cursor: pointer;
+      border: 1.5px solid #e5e7eb; background: #f9fafb;
+      font-size: 0.8rem; font-weight: 500; color: #374151;
+      transition: border-color 0.15s, background 0.15s;
+      user-select: none;
+    }
+    .billing-opt input[type="radio"] { accent-color: #2563eb; }
+    .billing-opt.selected { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; font-weight: 700; }
+    .billing-badge {
+      font-size: 0.67rem; font-weight: 700; padding: 0.1rem 0.35rem; border-radius: 3px;
+    }
+    .billing-badge-base    { background: #d1fae5; color: #065f46; }
+    .billing-badge-monthly { background: #fef3c7; color: #92400e; }
+    .billing-badge-mtm     { background: #fee2e2; color: #991b1b; }
+
+    /* ── Upgrade Advisor ── */
+    .advisor-layout { display: grid; grid-template-columns: 340px 1fr; gap: 1.5rem; align-items: start; }
+    @media (max-width: 800px) { .advisor-layout { grid-template-columns: 1fr; } }
+
+    .advisor-panel {
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.25rem;
+    }
+    .advisor-panel h3 { font-size: 0.85rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem; }
+
+    .adv-field { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.9rem; }
+    .adv-field label { font-size: 0.78rem; font-weight: 600; color: #374151; }
+    .adv-field select, .adv-field input[type="number"] {
+      padding: 0.45rem 0.7rem; border: 1px solid #d1d5db; border-radius: 8px;
+      font-size: 0.875rem; font-family: inherit; outline: none; background: #fff;
+    }
+    .adv-field select:focus, .adv-field input:focus { border-color: #2563eb; }
+
+    .addon-checks { display: flex; flex-direction: column; gap: 0.35rem; max-height: 320px; overflow-y: auto; }
+    .addon-check-item {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.35rem 0.5rem; border-radius: 6px; cursor: pointer;
+    }
+    .addon-check-item:hover { background: #f9fafb; }
+    .addon-check-item input { accent-color: #2563eb; width: 0.9rem; height: 0.9rem; flex-shrink: 0; }
+    .addon-check-item .aci-name { font-size: 0.82rem; color: #374151; flex: 1; }
+    .addon-check-item .aci-price { font-size: 0.78rem; color: #6b7280; white-space: nowrap; }
+    .addon-check-item.included { opacity: 0.45; pointer-events: none; }
+    .addon-check-item.included .aci-name::after { content: ' (included)'; color: #10b981; font-size: 0.72rem; }
+
+    /* Results */
+    .adv-results h3 { font-size: 0.85rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem; }
+    .adv-current {
+      background: #1e293b; color: #f8fafc; border-radius: 10px;
+      padding: 1rem 1.25rem; margin-bottom: 1.25rem;
+      display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center;
+    }
+    .adv-current-stat { display: flex; flex-direction: column; gap: 0.1rem; }
+    .adv-current-stat span:first-child { font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.07em; color: #94a3b8; }
+    .adv-current-stat span:last-child { font-size: 1.2rem; font-weight: 800; }
+
+    .adv-alt-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; }
+    .adv-alt-table th { background: #f8fafc; font-size: 0.78rem; font-weight: 700; color: #374151; padding: 0.6rem 0.85rem; text-align: left; }
+    .adv-alt-table td { padding: 0.65rem 0.85rem; font-size: 0.83rem; border-top: 1px solid #f3f4f6; }
+    .adv-alt-table tr:hover td { background: #f9fafb; }
+    .saving { color: #059669; font-weight: 700; }
+    .costing { color: #dc2626; font-weight: 700; }
+    .neutral { color: #6b7280; font-weight: 600; }
+    .covers-badge { font-size: 0.68rem; padding: 0.1rem 0.35rem; border-radius: 3px; font-weight: 600; }
+    .covers-all  { background: #d1fae5; color: #065f46; }
+    .covers-part { background: #fef3c7; color: #92400e; }
+    .adv-empty { color: #9ca3af; font-size: 0.875rem; padding: 1rem 0; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Microsoft 365 License Pricing</h1>
+    <p>Per-user, per-month pricing (annual subscription) · Prices updated July 2026 from Microsoft official sources.</p>
+  </header>
+
+  <!-- Billing type selector -->
+  <div class="billing-bar">
+    <span>NCE Billing Type:</span>
+    <label class="billing-opt selected" id="blbl-annual-annual">
+      <input type="radio" name="billing" value="annual-annual" checked onchange="setBilling(this)">
+      Annual / Billed Annually <span class="billing-badge billing-badge-base">Lowest price</span>
+    </label>
+    <label class="billing-opt" id="blbl-annual-monthly">
+      <input type="radio" name="billing" value="annual-monthly" onchange="setBilling(this)">
+      Annual / Billed Monthly <span class="billing-badge billing-badge-monthly">+5%</span>
+    </label>
+    <label class="billing-opt" id="blbl-monthly-monthly">
+      <input type="radio" name="billing" value="monthly-monthly" onchange="setBilling(this)">
+      Monthly / No Commitment <span class="billing-badge billing-badge-mtm">+20%</span>
+    </label>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('planner')">Client Planner</button>
+    <button class="tab-btn" onclick="switchTab('advisor')">Upgrade Advisor</button>
+    <button class="tab-btn" onclick="switchTab('compare')">Feature Comparison</button>
+    <button class="tab-btn" onclick="switchTab('pricing')">All Plans</button>
+  </div>
+
+  <!-- ══════════ PLANNER ══════════ -->
+  <div class="tab-panel active" id="tab-planner">
+    <div class="planner-header">
+      <div class="field-group">
+        <label for="client-name">Client Name</label>
+        <input id="client-name" type="text" placeholder="e.g. Acme Corp" style="width:220px">
+      </div>
+    </div>
+    <div class="license-rows" id="license-rows"></div>
+    <div class="summary-bar">
+      <div class="summary-stat"><span>Licenses</span><span id="sum-licenses">0</span></div>
+      <div class="summary-stat"><span>Total Seats</span><span id="sum-seats">0</span></div>
+      <div class="summary-stat"><span>Monthly Cost</span><span id="sum-monthly">$0.00</span></div>
+      <div class="summary-stat"><span>Annual Cost</span><span id="sum-annual">$0.00</span></div>
+      <div class="summary-name" id="sum-client"></div>
+    </div>
+    <div class="compare-btn-wrap">
+      <button class="btn btn-primary" id="go-compare-btn" onclick="buildCompare()" disabled>Compare Selected →</button>
+    </div>
+  </div>
+
+  <!-- ══════════ UPGRADE ADVISOR ══════════ -->
+  <div class="tab-panel" id="tab-advisor">
+    <div class="advisor-layout">
+
+      <!-- Left: inputs -->
+      <div class="advisor-panel">
+        <h3>Build Your Bundle</h3>
+
+        <div class="adv-field">
+          <label for="adv-base">Base Plan</label>
+          <select id="adv-base" onchange="runAdvisor()"></select>
+        </div>
+
+        <div class="adv-field">
+          <label for="adv-seats">Number of Users / Seats</label>
+          <input id="adv-seats" type="number" min="1" value="10" oninput="runAdvisor()">
+        </div>
+
+        <div class="adv-field">
+          <label>Add-ons to include</label>
+          <div class="addon-checks" id="adv-addons"></div>
+        </div>
+      </div>
+
+      <!-- Right: results -->
+      <div class="adv-results" id="adv-results">
+        <p class="adv-empty">Select a base plan to see upgrade options.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════ COMPARE ══════════ -->
+  <div class="tab-panel" id="tab-compare">
+    <div id="compare-section">
+      <p style="color:#6b7280;font-size:0.9rem;">Select licenses in the Client Planner tab, then click <strong>Compare Selected</strong>.</p>
+    </div>
+  </div>
+
+  <!-- ══════════ PRICING CARDS ══════════ -->
+  <div class="tab-panel" id="tab-pricing">
+
+    <div class="section-title">Frontline Worker</div>
+    <div class="grid">
+      <div class="card">
+        <span class="badge badge-frontline">Frontline</span>
+        <div class="card-name">Microsoft 365 F1</div>
+        <div class="card-price"><span class="price-amount">$3.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Teams (chat &amp; meetings)</li>
+          <li>Exchange (2 GB mailbox)</li>
+          <li>SharePoint &amp; OneDrive (2 GB)</li>
+          <li>Office web apps (view/edit)</li>
+          <li>Intune (device management)</li>
+        </ul>
+        <p class="card-note">No desktop Office apps. Web &amp; mobile only.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-frontline">Frontline</span>
+        <div class="card-name">Microsoft 365 F3</div>
+        <div class="card-price"><span class="price-amount">$10.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Everything in F1</li>
+          <li>Exchange (50 GB mailbox)</li>
+          <li>Office desktop apps</li>
+          <li>OneDrive (1 TB)</li>
+          <li>Intune + Entra ID P1</li>
+        </ul>
+        <p class="card-note">Up to 300 users.</p>
+      </div>
+    </div>
+
+    <div class="section-title">Business (up to 300 users)</div>
+    <div class="grid">
+      <div class="card">
+        <span class="badge badge-business">Business</span>
+        <div class="card-name">Microsoft 365 Apps for Business</div>
+        <div class="card-price"><span class="price-amount">$10.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Office desktop apps (Word, Excel, PowerPoint…)</li>
+          <li>Office mobile apps</li>
+          <li>OneDrive (1 TB)</li>
+          <li>Up to 5 devices per user</li>
+        </ul>
+        <p class="card-note">No Teams or Exchange.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-business">Business</span>
+        <div class="card-name">Microsoft 365 Business Basic</div>
+        <div class="card-price"><span class="price-amount">$7.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Teams (chat, meetings, calling)</li>
+          <li>Exchange (100 GB primary, 50 GB archive)</li>
+          <li>SharePoint &amp; OneDrive (1 TB)</li>
+          <li>Office web &amp; mobile apps</li>
+          <li>Entra ID Free</li>
+        </ul>
+        <p class="card-note">No desktop Office apps. No Intune.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-business">Business</span>
+        <div class="card-name">Microsoft 365 Business Standard</div>
+        <div class="card-price"><span class="price-amount">$14.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Everything in Business Basic</li>
+          <li>Exchange (100 GB primary, 50 GB archive)</li>
+          <li>Office desktop apps</li>
+          <li>Teams webinars</li>
+          <li>Microsoft Bookings &amp; MileIQ</li>
+          <li>Clipchamp, Loop</li>
+        </ul>
+        <p class="card-note">Copilot-bundled SKU available at $23.50/user/mo.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-business">Business</span>
+        <div class="card-name">Microsoft 365 Business Premium</div>
+        <div class="card-price"><span class="price-amount">$22.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Everything in Business Standard</li>
+          <li>Exchange (100 GB primary, 1.5 TB archive)</li>
+          <li>Entra ID P1 + Conditional Access</li>
+          <li>Intune Plan 1</li>
+          <li>Defender for Business + Defender for Office 365 P1</li>
+          <li>Purview DLP (email &amp; files) + Info Protection P1</li>
+          <li>Windows 11 Pro upgrade</li>
+        </ul>
+        <p class="card-note">Best security for SMBs. Copilot-bundled SKU at $32.00/user/mo.</p>
+      </div>
+    </div>
+
+    <div class="section-title">Office 365 Enterprise</div>
+    <div class="grid">
+      <div class="card">
+        <span class="badge badge-o365">Office 365</span>
+        <div class="card-name">Office 365 E1</div>
+        <div class="card-price"><span class="price-amount">$10.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Teams (chat, meetings)</li>
+          <li>Exchange (50 GB mailbox)</li>
+          <li>SharePoint &amp; OneDrive (1 TB)</li>
+          <li>Office web apps</li>
+        </ul>
+        <p class="card-note">No desktop apps. No Windows or Intune.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-o365">Office 365</span>
+        <div class="card-name">Office 365 E3</div>
+        <div class="card-price"><span class="price-amount">$26.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Everything in E1</li>
+          <li>Office desktop apps</li>
+          <li>Exchange (100 GB)</li>
+          <li>OneDrive (unlimited)</li>
+          <li>eDiscovery &amp; audit (basic)</li>
+        </ul>
+        <p class="card-note">No Windows, Intune, or advanced security.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-o365">Office 365</span>
+        <div class="card-name">Office 365 E5</div>
+        <div class="card-price"><span class="price-amount">$41.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Everything in O365 E3</li>
+          <li>Exchange (100 GB + archive)</li>
+          <li>Defender for Office 365 P2</li>
+          <li>eDiscovery &amp; audit (premium)</li>
+          <li>Phone System &amp; Audio Conferencing</li>
+          <li>Power BI Pro</li>
+        </ul>
+        <p class="card-note">No Windows or Intune.</p>
+      </div>
+    </div>
+
+    <div class="section-title">Microsoft 365 Enterprise</div>
+    <div class="grid">
+      <div class="card">
+        <span class="badge badge-enterprise">Enterprise</span>
+        <div class="card-name">Microsoft 365 Apps for Enterprise</div>
+        <div class="card-price"><span class="price-amount">$14.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Office desktop apps (up to 5 devices)</li>
+          <li>Office web &amp; mobile apps</li>
+          <li>OneDrive (1 TB)</li>
+        </ul>
+        <p class="card-note">No Teams, Exchange, or security features.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-enterprise">Enterprise</span>
+        <div class="card-name">Microsoft 365 E3</div>
+        <div class="card-price"><span class="price-amount">$39.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Office desktop &amp; web apps</li>
+          <li>Teams, Exchange (100 GB + 1.5 TB archive)</li>
+          <li>OneDrive (unlimited)</li>
+          <li>Entra ID P1, Intune Plan 1</li>
+          <li>Defender for Office 365 P1</li>
+          <li>eDiscovery &amp; audit (standard)</li>
+          <li>Windows 11 Enterprise E3</li>
+          <li>Remote Help, Advanced Analytics, Intune Plan 2 (Jul 2026+)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="badge badge-enterprise">Enterprise</span>
+        <div class="card-name">Microsoft 365 E5</div>
+        <div class="card-price"><span class="price-amount">$60.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Everything in E3</li>
+          <li>Exchange (100 GB + 1.5 TB archive)</li>
+          <li>Defender for Endpoint P2 + Office 365 P2</li>
+          <li>Defender for Identity + Cloud Apps</li>
+          <li>Entra ID P2 (PIM, Identity Protection)</li>
+          <li>Microsoft Purview DLP, eDiscovery premium</li>
+          <li>Power BI Pro, Phone System, Security Copilot</li>
+          <li>EPM, Cloud PKI (Jul 2026+)</li>
+        </ul>
+        <p class="card-note">Top-tier security &amp; compliance.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-enterprise">Enterprise</span>
+        <div class="card-name">Microsoft 365 E7 <span style="font-size:0.7rem;color:#7c3aed">(Frontier Suite)</span></div>
+        <div class="card-price"><span class="price-amount">$99.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Everything in E5</li>
+          <li>Exchange (100 GB + 1.5 TB archive)</li>
+          <li>Microsoft 365 Copilot included</li>
+          <li>Agent 365 + Copilot Studio (full)</li>
+          <li>Entra ID P2 + Entra Suite</li>
+          <li>Windows 11 Enterprise E5</li>
+        </ul>
+        <p class="card-note">Bundles E5 + Copilot + Agent 365 + Entra Suite.</p>
+      </div>
+    </div>
+
+    <div class="section-title">Security Add-ons (requires E3 base)</div>
+    <div class="grid">
+      <div class="card">
+        <span class="badge badge-addon">Add-on</span>
+        <div class="card-name">Microsoft 365 E5 Security</div>
+        <div class="card-price"><span class="price-amount">$12.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Defender for Endpoint P2</li>
+          <li>Defender for Identity</li>
+          <li>Defender for Cloud Apps</li>
+          <li>Entra ID P2</li>
+        </ul>
+        <p class="card-req">Requires M365 E3</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-addon">Add-on</span>
+        <div class="card-name">Microsoft 365 E5 Compliance</div>
+        <div class="card-price"><span class="price-amount">$12.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Microsoft Purview DLP</li>
+          <li>Insider Risk Management</li>
+          <li>eDiscovery &amp; audit (premium)</li>
+          <li>Information barriers</li>
+        </ul>
+        <p class="card-req">Requires M365 E3</p>
+      </div>
+    </div>
+
+    <div class="section-title">Teams Add-ons &amp; Standalone</div>
+    <div class="grid">
+      <div class="card">
+        <span class="badge badge-addon">Teams</span>
+        <div class="card-name">Teams Essentials</div>
+        <div class="card-price"><span class="price-amount">$4.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Unlimited group meetings (30 hr)</li>
+          <li>10 GB cloud storage per user</li>
+          <li>Chat &amp; collaboration</li>
+        </ul>
+        <p class="card-note">Standalone. No Exchange or Office apps.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-addon">Teams</span>
+        <div class="card-name">Teams Enterprise</div>
+        <div class="card-price"><span class="price-amount">$8.55</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Teams for enterprise deployments</li>
+          <li>Advanced meeting management</li>
+          <li>Microsoft 365 integration</li>
+        </ul>
+        <p class="card-note">For orgs needing Teams without full M365 suite.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-addon">Teams</span>
+        <div class="card-name">Teams Phone Standard</div>
+        <div class="card-price"><span class="price-amount">$10.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Cloud PBX &amp; voicemail</li>
+          <li>Call transfer, park, forward</li>
+          <li>Auto attendants &amp; call queues</li>
+        </ul>
+        <p class="card-note">PSTN calling plan sold separately.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-addon">Teams</span>
+        <div class="card-name">Teams Phone + Calling Plan (Zone 1)</div>
+        <div class="card-price"><span class="price-amount">$17.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Teams Phone Standard included</li>
+          <li>Domestic calling plan (US/CA/UK)</li>
+          <li>No per-minute overage</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="badge badge-addon">Teams</span>
+        <div class="card-name">Teams Premium</div>
+        <div class="card-price"><span class="price-amount">$10.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>AI-powered meeting recap &amp; notes</li>
+          <li>Advanced webinars</li>
+          <li>Meeting branding &amp; watermarks</li>
+          <li>Advanced meeting protection</li>
+        </ul>
+        <p class="card-req">Requires Teams (any plan)</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-addon">Teams</span>
+        <div class="card-name">Teams Rooms Pro</div>
+        <div class="card-price"><span class="price-amount">$40.00</span><span class="price-suffix">/ room / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Advanced room management</li>
+          <li>AI-enhanced in-room experiences</li>
+          <li>Remote monitoring &amp; alerts</li>
+          <li>Analytics &amp; reporting</li>
+        </ul>
+        <p class="card-note">Teams Rooms Basic is free (max 25 rooms).</p>
+      </div>
+    </div>
+
+    <div class="section-title">Microsoft Entra ID (formerly Azure AD)</div>
+    <div class="grid">
+      <div class="card">
+        <span class="badge badge-addon">Entra ID</span>
+        <div class="card-name">Entra ID Free</div>
+        <div class="card-price"><span class="price-amount">$0</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Basic SSO (10 apps/user)</li>
+          <li>MFA via Authenticator app</li>
+          <li>Self-service password reset</li>
+          <li>B2B collaboration</li>
+        </ul>
+        <p class="card-note">Included with all Microsoft cloud subscriptions.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-addon">Entra ID</span>
+        <div class="card-name">Entra ID P1</div>
+        <div class="card-price"><span class="price-amount">$7.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Unlimited SSO</li>
+          <li>Conditional Access policies</li>
+          <li>Group-based access mgmt</li>
+          <li>SSPR with writeback</li>
+          <li>Entra ID Protection (basic)</li>
+        </ul>
+        <p class="card-note">Included in M365 E3, Business Premium, F3.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-addon">Entra ID</span>
+        <div class="card-name">Entra ID P2</div>
+        <div class="card-price"><span class="price-amount">$10.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Everything in P1</li>
+          <li>Privileged Identity Management (PIM)</li>
+          <li>Identity Protection (risk policies)</li>
+          <li>Access Reviews</li>
+          <li>Entitlement Management</li>
+        </ul>
+        <p class="card-note">Included in M365 E5.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-addon">Entra ID</span>
+        <div class="card-name">Entra Suite</div>
+        <div class="card-price"><span class="price-amount">$12.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Everything in P2</li>
+          <li>Entra Internet Access (SWG)</li>
+          <li>Entra Private Access (ZTNA)</li>
+          <li>Entra ID Governance</li>
+          <li>Entra Verified ID</li>
+        </ul>
+        <p class="card-req">Requires P1 as prerequisite. Included in E7.</p>
+      </div>
+    </div>
+
+    <div class="section-title">Microsoft Intune</div>
+    <div class="grid">
+      <div class="card">
+        <span class="badge badge-addon">Intune</span>
+        <div class="card-name">Intune Plan 1</div>
+        <div class="card-price"><span class="price-amount">$8.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>MDM &amp; MAM for all platforms</li>
+          <li>App protection policies</li>
+          <li>Endpoint compliance policies</li>
+          <li>Conditional Access integration</li>
+        </ul>
+        <p class="card-note">Included in M365 E3/E5, Business Basic/Premium, F1/F3.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-addon">Intune</span>
+        <div class="card-name">Intune Plan 2 (add-on)</div>
+        <div class="card-price"><span class="price-amount">$4.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Tunnel for MAM</li>
+          <li>Specialty device management</li>
+          <li>FOTA (firmware-over-the-air)</li>
+        </ul>
+        <p class="card-req">Requires Intune Plan 1. Included in M365 E3 (Jul 2026+).</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-addon">Intune</span>
+        <div class="card-name">Intune Suite</div>
+        <div class="card-price"><span class="price-amount">$10.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Includes Plan 2</li>
+          <li>Remote Help</li>
+          <li>Endpoint Privilege Management</li>
+          <li>Advanced Analytics</li>
+          <li>Enterprise App Management</li>
+          <li>Microsoft Cloud PKI</li>
+        </ul>
+        <p class="card-req">Requires Intune Plan 1.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-addon">Intune</span>
+        <div class="card-name">Intune Individual Add-ons</div>
+        <div class="card-price"><span class="price-amount" style="font-size:1.2rem">From $2.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Remote Help — $3.50/user/mo</li>
+          <li>Endpoint Privilege Mgmt — $3.00/user/mo</li>
+          <li>Advanced Analytics — $5.00/user/mo</li>
+          <li>Enterprise App Mgmt — $2.00/user/mo</li>
+          <li>Microsoft Cloud PKI — $2.00/user/mo</li>
+        </ul>
+        <p class="card-req">All require Intune Plan 1.</p>
+      </div>
+    </div>
+
+    <div class="section-title">Copilot &amp; AI</div>
+    <div class="grid">
+      <div class="card">
+        <span class="badge badge-addon">Copilot</span>
+        <div class="card-name">Microsoft 365 Copilot (Business)</div>
+        <div class="card-price"><span class="price-amount">$21.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>AI in Word, Excel, PowerPoint, Outlook</li>
+          <li>Teams meeting summaries &amp; chat</li>
+          <li>Microsoft 365 Chat (BizChat)</li>
+        </ul>
+        <p class="card-note">Discounted to $18.00 through Dec 2026.</p>
+        <p class="card-req">Requires eligible M365 Business plan.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-addon">Copilot</span>
+        <div class="card-name">Microsoft 365 Copilot (Enterprise)</div>
+        <div class="card-price"><span class="price-amount">$30.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>AI in all M365 apps</li>
+          <li>Copilot Studio access</li>
+          <li>Graph-grounded responses</li>
+          <li>Enterprise data protection</li>
+        </ul>
+        <p class="card-req">Requires M365 E3 or E5. Included in E7.</p>
+      </div>
+      <div class="card">
+        <span class="badge badge-addon">Copilot</span>
+        <div class="card-name">Agent 365</div>
+        <div class="card-price"><span class="price-amount">$15.00</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Autonomous AI agents</li>
+          <li>Copilot Studio integration</li>
+          <li>Cross-app agent orchestration</li>
+        </ul>
+        <p class="card-req">Requires Copilot. Included in M365 E7.</p>
+      </div>
+    </div>
+
+    <div class="section-title">Windows</div>
+    <div class="grid">
+      <div class="card">
+        <span class="badge badge-addon">Windows</span>
+        <div class="card-name">Windows E3</div>
+        <div class="card-price"><span class="price-amount">$7.63</span><span class="price-suffix">/ user / mo</span></div>
+        <hr class="card-divider">
+        <ul class="card-features">
+          <li>Windows 11 Enterprise</li>
+          <li>Windows Autopilot</li>
+          <li>BitLocker &amp; DirectAccess</li>
+          <li>VDA rights (virtual desktop)</li>
+        </ul>
+        <p class="card-note">Included in M365 E3/E5/E7.</p>
+      </div>
+    </div>
+
+  </div><!-- /tab-pricing -->
+
+  <footer>
+    Prices reflect official Microsoft list pricing effective July 1, 2026 (annual subscription, USD). Verified August 2026. Sources:
+    <a href="https://www.microsoft.com/en-us/licensing/news/2026-m365-packaging-pricing-updates" target="_blank">2026 Pricing Updates</a> ·
+    <a href="https://www.microsoft.com/en-us/microsoft-365/enterprise/microsoft365-plans-and-pricing" target="_blank">Enterprise Plans</a> ·
+    <a href="https://www.microsoft.com/en-us/security/business/microsoft-entra-pricing" target="_blank">Entra Pricing</a> ·
+    <a href="https://www.microsoft.com/en-us/security/microsoft-intune-pricing" target="_blank">Intune Pricing</a> ·
+    <a href="https://www.microsoft.com/en-us/microsoft-teams/compare-microsoft-teams-options" target="_blank">Teams Pricing</a>.
+    Always verify at microsoft.com before quoting clients.
+  </footer>
+
+</div><!-- /container -->
+
+<script>
+// ── License data ───────────────────────────────────────────────────────────
+const CATS = [
+  { label: 'Frontline', ids: ['f1','f3'] },
+  { label: 'Business (up to 300 users)', ids: ['apps','bsc','std','prm'] },
+  { label: 'Office 365 Enterprise', ids: ['o365e1','o365e3','o365e5'] },
+  { label: 'Microsoft 365 Enterprise', ids: ['appsent','e3','e5','e7'] },
+  { label: 'Security Add-ons', ids: ['e5s','e5c'] },
+  { label: 'Teams Add-ons', ids: ['tess','tent','tphn','tphnz1','tprm','troomspro'] },
+  { label: 'Entra ID', ids: ['entrafree','entrap1','entrap2','entras'] },
+  { label: 'Intune', ids: ['int1','int2','ints','intrh','intepm','intaa','inteam','intpki'] },
+  { label: 'Copilot & AI', ids: ['copbiz','copent','agent365'] },
+  { label: 'Windows', ids: ['wine3'] },
+];
+
+const LICENSES_MAP = {
+  f1:        { name:'Microsoft 365 F1',                  price:3.00,  tier:'frontline'  },
+  f3:        { name:'Microsoft 365 F3',                  price:10.00, tier:'frontline'  },
+  apps:      { name:'M365 Apps for Business',            price:10.00, tier:'business'   },
+  bsc:       { name:'M365 Business Basic',               price:7.00,  tier:'business'   },
+  std:       { name:'M365 Business Standard',            price:14.00, tier:'business'   },
+  prm:       { name:'M365 Business Premium',             price:22.00, tier:'business'   },
+  o365e1:    { name:'Office 365 E1',                     price:10.00, tier:'o365'       },
+  o365e3:    { name:'Office 365 E3',                     price:26.00, tier:'o365'       },
+  o365e5:    { name:'Office 365 E5',                     price:41.00, tier:'o365'       },
+  appsent:   { name:'M365 Apps for Enterprise',          price:14.00, tier:'enterprise' },
+  e3:        { name:'Microsoft 365 E3',                  price:39.00, tier:'enterprise' },
+  e5:        { name:'Microsoft 365 E5',                  price:60.00, tier:'enterprise' },
+  e7:        { name:'Microsoft 365 E7',                  price:99.00, tier:'enterprise' },
+  e5s:       { name:'M365 E5 Security (add-on)',         price:12.00, tier:'addon'      },
+  e5c:       { name:'M365 E5 Compliance (add-on)',       price:12.00, tier:'addon'      },
+  tess:      { name:'Teams Essentials',                  price:4.00,  tier:'addon'      },
+  tent:      { name:'Teams Enterprise',                  price:8.55,  tier:'addon'      },
+  tphn:      { name:'Teams Phone Standard',              price:10.00, tier:'addon'      },
+  tphnz1:    { name:'Teams Phone + Calling Plan (Z1)',   price:17.00, tier:'addon'      },
+  tprm:      { name:'Teams Premium',                     price:10.00, tier:'addon'      },
+  troomspro: { name:'Teams Rooms Pro',                   price:40.00, tier:'addon', unit:'room' },
+  entrafree: { name:'Entra ID Free',                     price:0.00,  tier:'addon'      },
+  entrap1:   { name:'Entra ID P1',                       price:7.00,  tier:'addon'      },
+  entrap2:   { name:'Entra ID P2',                       price:10.00, tier:'addon'      },
+  entras:    { name:'Entra Suite',                       price:12.00, tier:'addon'      },
+  int1:      { name:'Intune Plan 1',                     price:8.00,  tier:'addon'      },
+  int2:      { name:'Intune Plan 2 (add-on)',            price:4.00,  tier:'addon'      },
+  ints:      { name:'Intune Suite',                      price:10.00, tier:'addon'      },
+  intrh:     { name:'Intune Remote Help',                price:3.50,  tier:'addon'      },
+  intepm:    { name:'Endpoint Privilege Mgmt',           price:3.00,  tier:'addon'      },
+  intaa:     { name:'Intune Advanced Analytics',         price:5.00,  tier:'addon'      },
+  inteam:    { name:'Enterprise App Management',         price:2.00,  tier:'addon'      },
+  intpki:    { name:'Microsoft Cloud PKI',               price:2.00,  tier:'addon'      },
+  copbiz:    { name:'Copilot (Business)',                 price:21.00, tier:'addon'      },
+  copent:    { name:'Copilot (Enterprise)',               price:30.00, tier:'addon'      },
+  agent365:  { name:'Agent 365',                         price:15.00, tier:'addon'      },
+  wine3:     { name:'Windows E3',                        price:7.63,  tier:'addon'      },
+};
+
+// ── Feature matrix (main suite plans only) ─────────────────────────────────
+// true=yes, false=no, string=partial/note
+const FEATURES = [
+  { cat:'Office Apps' },
+  { label:'Office Desktop Apps',         f1:false,     f3:true,      apps:true,      bsc:false,    std:true,     prm:true,    o365e1:false,   o365e3:true,    o365e5:true,    appsent:true,   e3:true,        e5:true,       e7:true       },
+  { label:'Office Web Apps',             f1:'View',    f3:true,      apps:true,      bsc:true,     std:true,     prm:true,    o365e1:true,    o365e3:true,    o365e5:true,    appsent:true,   e3:true,        e5:true,       e7:true       },
+  { label:'Office Mobile Apps',          f1:true,      f3:true,      apps:true,      bsc:true,     std:true,     prm:true,    o365e1:true,    o365e3:true,    o365e5:true,    appsent:true,   e3:true,        e5:true,       e7:true       },
+
+  { cat:'Communication' },
+  { label:'Teams (Chat & Meetings)',     f1:true,      f3:true,      apps:false,     bsc:true,     std:true,     prm:true,    o365e1:true,    o365e3:true,    o365e5:true,    appsent:false,  e3:true,        e5:true,       e7:true       },
+  { label:'Teams Webinars',              f1:false,     f3:false,     apps:false,     bsc:false,    std:true,     prm:true,    o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:true,        e5:true,       e7:true       },
+  { label:'Phone System (PSTN)',         f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:true,    appsent:false,  e3:false,       e5:true,       e7:true       },
+  { label:'Audio Conferencing',          f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:true,    appsent:false,  e3:false,       e5:true,       e7:true       },
+  { label:'Microsoft Bookings',          f1:false,     f3:false,     apps:false,     bsc:false,    std:true,     prm:true,    o365e1:false,   o365e3:true,    o365e5:true,    appsent:false,  e3:true,        e5:true,       e7:true       },
+
+  { cat:'Email & Storage' },
+  { label:'Exchange Mailbox (Primary)',   f1:'2 GB',    f3:'50 GB',   apps:false,     bsc:'100 GB', std:'100 GB', prm:'100 GB',o365e1:'50 GB', o365e3:'100 GB',o365e5:'100 GB',appsent:false,  e3:'100 GB',    e5:'100 GB',   e7:'100 GB'   },
+  { label:'Exchange Archive Mailbox',    f1:false,     f3:false,     apps:false,     bsc:'50 GB',  std:'50 GB',  prm:'1.5 TB',o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:'1.5 TB',    e5:'1.5 TB',   e7:'1.5 TB'   },
+  { label:'SharePoint',                  f1:true,      f3:true,      apps:false,     bsc:true,     std:true,     prm:true,    o365e1:true,    o365e3:true,    o365e5:true,    appsent:false,  e3:true,        e5:true,       e7:true       },
+  { label:'OneDrive Storage',            f1:'2 GB',    f3:'1 TB',    apps:'1 TB',    bsc:'1 TB',   std:'1 TB',   prm:'1 TB',  o365e1:'1 TB',  o365e3:'Unltd', o365e5:'Unltd', appsent:'1 TB', e3:'Unltd',     e5:'Unltd',    e7:'Unltd'    },
+
+  { cat:'Identity & Access (Entra ID)' },
+  { label:'Entra ID Free',               f1:true,      f3:true,      apps:true,      bsc:true,     std:true,     prm:true,    o365e1:true,    o365e3:true,    o365e5:true,    appsent:true,   e3:true,        e5:true,       e7:true       },
+  { label:'Entra ID P1',                 f1:false,     f3:true,      apps:false,     bsc:false,    std:false,    prm:true,    o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:true,        e5:true,       e7:true       },
+  { label:'Entra ID P2',                 f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:true,       e7:true       },
+  { label:'Entra Suite',                 f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:false,      e7:true       },
+  { label:'Conditional Access',          f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:true,    o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:true,        e5:true,       e7:true       },
+  { label:'Privileged Identity Mgmt',    f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:true,       e7:true       },
+
+  { cat:'Device Management (Intune)' },
+  { label:'Intune Plan 1',               f1:true,      f3:true,      apps:false,     bsc:false,    std:false,    prm:true,    o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:true,        e5:true,       e7:true       },
+  { label:'Intune Plan 2',               f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:'Jul 2026+', e5:'Jul 2026+',e7:true       },
+  { label:'Remote Help',                 f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:'Jul 2026+', e5:'Jul 2026+',e7:true       },
+  { label:'Endpoint Privilege Mgmt',     f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:'Jul 2026+',e7:true       },
+  { label:'Windows 11 Enterprise',       f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:true,        e5:true,       e7:true       },
+
+  { cat:'Security & Threat Protection' },
+  { label:'Defender for Business',       f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:true,    o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:false,      e7:false      },
+  { label:'Defender for Office 365',     f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:'P1',    o365e1:false,   o365e3:false,   o365e5:'P2',    appsent:false,  e3:'P1',        e5:'P2',       e7:'P2'       },
+  { label:'Defender for Endpoint',       f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:'P2',       e7:'P2'       },
+  { label:'Defender for Identity',       f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:true,       e7:true       },
+  { label:'Defender for Cloud Apps',     f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:true,       e7:true       },
+  { label:'Security Copilot',            f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:'Default',  e7:'Default'  },
+
+  { cat:'Compliance & Governance' },
+  { label:'eDiscovery & Audit',          f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:'Basic', o365e5:'Premium',appsent:false, e3:'Basic',     e5:'Premium',  e7:'Premium'  },
+  { label:'Microsoft Purview DLP',       f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:'Email+Files',o365e1:false, o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:true,       e7:true       },
+  { label:'Purview Info Protection',     f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:'P1',    o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:true,        e5:true,       e7:true       },
+  { label:'Insider Risk Management',     f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:true,       e7:true       },
+
+  { cat:'Analytics & AI' },
+  { label:'Power BI Pro',                f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:true,    appsent:false,  e3:false,       e5:true,       e7:true       },
+  { label:'Microsoft 365 Copilot',       f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:false,      e7:true       },
+  { label:'Agent 365',                   f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:false,      e7:true       },
+  { label:'MileIQ',                      f1:false,     f3:false,     apps:false,     bsc:false,    std:true,     prm:true,    o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:false,      e7:false      },
+];
+
+// ── Build planner rows ─────────────────────────────────────────────────────
+function buildPlanner() {
+  const container = document.getElementById('license-rows');
+  container.innerHTML = '';
+  CATS.forEach(cat => {
+    const title = document.createElement('div');
+    title.className = 'planner-cat-title';
+    title.textContent = cat.label;
+    container.appendChild(title);
+    cat.ids.forEach(id => {
+      const lic = LICENSES_MAP[id];
+      if (!lic) return;
+      const unit = lic.unit || 'user';
+      const row = document.createElement('div');
+      row.className = 'license-row';
+      row.id = 'row-' + id;
+      row.innerHTML = `
+        <input type="checkbox" id="chk-${id}" onchange="onCheck('${id}')">
+        <span class="badge badge-${lic.tier}">${lic.tier}</span>
+        <label class="lr-name" for="chk-${id}">${lic.name}</label>
+        <span class="lr-price">$${lic.price.toFixed(2)} / ${unit} / mo</span>
+        <div class="lr-seats-wrap">
+          <label for="seats-${id}">${unit === 'room' ? 'Rooms' : 'Seats'}</label>
+          <input class="lr-seats" type="number" id="seats-${id}" min="1" value="1" oninput="updateSummary()">
+        </div>
+        <span class="lr-subtotal" id="sub-${id}">—</span>
+      `;
+      container.appendChild(row);
+    });
+  });
+}
+
+function onCheck(id) {
+  const row = document.getElementById('row-' + id);
+  const chk = document.getElementById('chk-' + id);
+  row.classList.toggle('checked', chk.checked);
+  updateSummary();
+}
+
+// ── Update summary ─────────────────────────────────────────────────────────
+function updateSummary() {
+  const mult = getBillingMult();
+  let totalMonthly = 0, totalSeats = 0, licCount = 0;
+  Object.keys(LICENSES_MAP).forEach(id => {
+    const chk   = document.getElementById('chk-' + id);
+    const seats = parseInt(document.getElementById('seats-' + id).value) || 0;
+    const sub   = document.getElementById('sub-' + id);
+    if (chk && chk.checked && seats > 0) {
+      const lic = LICENSES_MAP[id];
+      const amt = lic.price * mult * seats;
+      totalMonthly += amt;
+      totalSeats += seats;
+      licCount++;
+      sub.textContent = '$' + amt.toFixed(2) + '/mo';
+    } else if (sub) {
+      sub.textContent = '—';
+    }
+  });
+  document.getElementById('sum-licenses').textContent = licCount;
+  document.getElementById('sum-seats').textContent = totalSeats;
+  document.getElementById('sum-monthly').textContent = '$' + totalMonthly.toFixed(2);
+  document.getElementById('sum-annual').textContent  = '$' + (totalMonthly * 12).toFixed(2);
+  const name = document.getElementById('client-name').value.trim();
+  document.getElementById('sum-client').textContent = name || '';
+  document.getElementById('go-compare-btn').disabled = licCount < 1;
+}
+
+// ── Build comparison table ─────────────────────────────────────────────────
+function buildCompare() {
+  const selected = Object.keys(LICENSES_MAP)
+    .filter(id => document.getElementById('chk-' + id) && document.getElementById('chk-' + id).checked)
+    .map(id => ({ id, ...LICENSES_MAP[id] }));
+  if (!selected.length) return;
+
+  const section = document.getElementById('compare-section');
+  const shortNames = selected.map(l => l.name.replace('Microsoft 365 ','').replace('Office 365 ','O365 ').replace(' (add-on)',''));
+
+  let html = `<h2>Comparing ${shortNames.join(' · ')}</h2>`;
+  html += '<div class="compare-table-wrap"><table class="compare"><thead><tr>';
+  html += '<th class="feature-col">Feature</th>';
+  selected.forEach(l => {
+    const unit = l.unit || 'user';
+    html += `<th>${l.name.replace('Microsoft 365 ','M365 ').replace('Office 365 ','O365 ')}<br>
+      <span style="font-weight:400;color:#6b7280;font-size:0.78rem">$${l.price.toFixed(2)}/${unit}/mo</span></th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  FEATURES.forEach(row => {
+    if (row.cat) {
+      html += `<tr class="cat-row"><td colspan="${selected.length + 1}">${row.cat}</td></tr>`;
+      return;
+    }
+    html += `<tr><td class="feature-col">${row.label}</td>`;
+    selected.forEach(l => {
+      const val = row[l.id];
+      if (val === undefined || val === false) {
+        html += `<td><span class="check-no">—</span></td>`;
+      } else if (val === true) {
+        html += `<td class="col-yes"><span class="check-yes">✓</span></td>`;
+      } else {
+        html += `<td class="col-part"><span class="check-partial">${val}</span></td>`;
+      }
+    });
+    html += '</tr>';
+  });
+
+  // Cost footer row
+  const cmpMult = getBillingMult();
+  const billingLabel = {'annual-annual':'Annual/Annual','annual-monthly':'Annual/Monthly (+5%)','monthly-monthly':'Monthly/No Commitment (+20%)'}[currentBilling];
+  html += `<tr style="background:#f8fafc;font-weight:700"><td class="feature-col">Monthly Cost — ${billingLabel}</td>`;
+  selected.forEach(l => {
+    const seats = parseInt(document.getElementById('seats-' + l.id).value) || 0;
+    html += `<td style="color:#2563eb">$${(l.price * cmpMult * seats).toFixed(2)}</td>`;
+  });
+  html += '</tr></tbody></table></div>';
+
+  section.innerHTML = html;
+  switchTab('compare');
+}
+
+// ── Tab switching ──────────────────────────────────────────────────────────
+function switchTab(name) {
+  const names = ['planner','advisor','compare','pricing'];
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', names[i] === name));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+}
+
+// ── Upgrade Advisor ────────────────────────────────────────────────────────
+
+// Which add-on IDs are natively covered by each full plan
+const PLAN_COVERS = {
+  f1:      ['entrafree','int1'],
+  f3:      ['entrafree','entrap1','int1'],
+  apps:    [],
+  bsc:     ['entrafree'],
+  std:     ['entrafree'],
+  prm:     ['entrafree','entrap1','int1'],
+  o365e1:  ['entrafree'],
+  o365e3:  ['entrafree'],
+  o365e5:  ['entrafree'],
+  appsent: [],
+  e3:      ['entrafree','entrap1','int1','int2','intrh','intaa','wine3'],
+  e5:      ['entrafree','entrap1','entrap2','int1','int2','intrh','intaa','intepm','intpki','wine3'],
+  e7:      ['entrafree','entrap1','entrap2','entras','int1','int2','ints','intrh','intaa','intepm','intpki','inteam','wine3','copent','agent365'],
+};
+
+const MAIN_PLAN_IDS = ['f1','f3','apps','bsc','std','prm','o365e1','o365e3','o365e5','appsent','e3','e5','e7'];
+const ADDON_IDS     = ['entrap1','entrap2','entras','int1','int2','ints','intrh','intepm','intaa','inteam','intpki',
+                       'tess','tent','tphn','tphnz1','tprm','troomspro','copbiz','copent','agent365','wine3','e5s','e5c'];
+
+// Capability floor for each plan — used to detect downgrades
+// office_web: 'full' = full edit, 'view' = view/limited only, 'none' = not included
+const PLAN_CAPS = {
+  f1:      { office_desktop: false, office_web: 'view', teams: true,  exchange: true,  user_limit: Infinity },
+  f3:      { office_desktop: true,  office_web: 'full', teams: true,  exchange: true,  user_limit: Infinity },
+  apps:    { office_desktop: true,  office_web: 'full', teams: false, exchange: false, user_limit: 300      },
+  bsc:     { office_desktop: false, office_web: 'full', teams: true,  exchange: true,  user_limit: 300      },
+  std:     { office_desktop: true,  office_web: 'full', teams: true,  exchange: true,  user_limit: 300      },
+  prm:     { office_desktop: true,  office_web: 'full', teams: true,  exchange: true,  user_limit: 300      },
+  o365e1:  { office_desktop: false, office_web: 'full', teams: true,  exchange: true,  user_limit: Infinity },
+  o365e3:  { office_desktop: true,  office_web: 'full', teams: true,  exchange: true,  user_limit: Infinity },
+  o365e5:  { office_desktop: true,  office_web: 'full', teams: true,  exchange: true,  user_limit: Infinity },
+  appsent: { office_desktop: true,  office_web: 'full', teams: false, exchange: false, user_limit: Infinity },
+  e3:      { office_desktop: true,  office_web: 'full', teams: true,  exchange: true,  user_limit: Infinity },
+  e5:      { office_desktop: true,  office_web: 'full', teams: true,  exchange: true,  user_limit: Infinity },
+  e7:      { office_desktop: true,  office_web: 'full', teams: true,  exchange: true,  user_limit: Infinity },
+};
+
+const WEB_RANK = { none: 0, view: 1, full: 2 };
+
+function isDowngrade(baseId, altId) {
+  const b = PLAN_CAPS[baseId];
+  const a = PLAN_CAPS[altId];
+  if (!b || !a) return false;
+  if (b.office_desktop && !a.office_desktop)                    return true;  // loses local installs
+  if (WEB_RANK[b.office_web] > WEB_RANK[a.office_web])         return true;  // loses web editing
+  if (b.teams && !a.teams)                                      return true;  // loses Teams
+  if (b.exchange && !a.exchange)                                return true;  // loses email
+  if (b.user_limit === Infinity && a.user_limit < Infinity)     return true;  // gains user cap
+  return false;
+}
+
+function buildAdvisor() {
+  // Populate base plan dropdown
+  const sel = document.getElementById('adv-base');
+  sel.innerHTML = '';
+  MAIN_PLAN_IDS.forEach(id => {
+    const lic = LICENSES_MAP[id];
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = `${lic.name}  ($${lic.price.toFixed(2)}/user/mo)`;
+    sel.appendChild(opt);
+  });
+  // Default to Business Standard
+  sel.value = 'std';
+  refreshAddonList();
+}
+
+function refreshAddonList() {
+  const baseId  = document.getElementById('adv-base').value;
+  const covered = new Set(PLAN_COVERS[baseId] || []);
+  const container = document.getElementById('adv-addons');
+  container.innerHTML = '';
+
+  ADDON_IDS.forEach(id => {
+    const lic  = LICENSES_MAP[id];
+    if (!lic) return;
+    const item = document.createElement('label');
+    item.className = 'addon-check-item' + (covered.has(id) ? ' included' : '');
+    item.innerHTML = `
+      <input type="checkbox" id="adv-chk-${id}" ${covered.has(id) ? 'checked disabled' : ''} onchange="runAdvisor()">
+      <span class="aci-name">${lic.name}</span>
+      <span class="aci-price">$${lic.price.toFixed(2)}/mo</span>
+    `;
+    container.appendChild(item);
+  });
+  runAdvisor();
+}
+
+function runAdvisor() {
+  const baseId   = document.getElementById('adv-base').value;
+  const seats    = parseInt(document.getElementById('adv-seats').value) || 1;
+  const baseLic  = LICENSES_MAP[baseId];
+  const covered  = new Set(PLAN_COVERS[baseId] || []);
+
+  // Collect user-selected add-ons (excluding already-covered ones)
+  const selectedAddons = ADDON_IDS.filter(id => {
+    const el = document.getElementById('adv-chk-' + id);
+    return el && el.checked && !covered.has(id);
+  });
+
+  const mult        = getBillingMult();
+  const addonCost   = selectedAddons.reduce((s, id) => s + (LICENSES_MAP[id]?.price || 0), 0);
+  const bundleCostPerUser = (baseLic.price + addonCost) * mult;
+  const bundleMonthly     = bundleCostPerUser * seats;
+  const bundleAnnual      = bundleMonthly * 12;
+
+  // Find alternative plans — exclude downgrades, then score by add-on coverage
+  const needed = new Set([...selectedAddons]);
+  const downgradeCount = MAIN_PLAN_IDS.filter(pid => pid !== baseId && isDowngrade(baseId, pid)).length;
+  const results = MAIN_PLAN_IDS
+    .filter(pid => pid !== baseId && !isDowngrade(baseId, pid))
+    .map(pid => {
+      const planCovers = new Set(PLAN_COVERS[pid] || []);
+      const covers     = [...needed].filter(id => planCovers.has(id));
+      const missing    = [...needed].filter(id => !planCovers.has(id));
+      const altCostPer = LICENSES_MAP[pid].price * mult;
+      const altMonthly = altCostPer * seats;
+      const diff       = altMonthly - bundleMonthly;
+      return { pid, covers, missing, altCostPer, altMonthly, diff };
+    })
+    .filter(r => needed.size === 0 || r.covers.length > 0)
+    .sort((a, b) => Math.abs(a.diff) - Math.abs(b.diff));
+
+  // Render
+  const resultsEl = document.getElementById('adv-results');
+  const addonNames = selectedAddons.map(id => LICENSES_MAP[id]?.name || id).join(', ') || 'none';
+
+  let html = `<h3>Bundle Analysis</h3>`;
+
+  // Current bundle summary
+  const billingLabels = {'annual-annual':'Annual / Billed Annually','annual-monthly':'Annual / Billed Monthly (+5%)','monthly-monthly':'Monthly / No Commitment (+20%)'};
+  html += `<div class="adv-current">
+    <div class="adv-current-stat"><span>Your Bundle</span><span>${baseLic.name}${selectedAddons.length ? ' + ' + selectedAddons.length + ' add-on(s)' : ''}</span></div>
+    <div class="adv-current-stat"><span>Billing</span><span style="font-size:0.9rem">${billingLabels[currentBilling]}</span></div>
+    <div class="adv-current-stat"><span>Per User / Mo</span><span>$${bundleCostPerUser.toFixed(2)}</span></div>
+    <div class="adv-current-stat"><span>Monthly (${seats} seats)</span><span>$${bundleMonthly.toFixed(2)}</span></div>
+    <div class="adv-current-stat"><span>Annual</span><span>$${bundleAnnual.toFixed(2)}</span></div>
+  </div>`;
+
+  if (selectedAddons.length === 0) {
+    html += `<p class="adv-empty">Check add-ons above to see which plans bundle them and compare costs.</p>`;
+    resultsEl.innerHTML = html;
+    return;
+  }
+
+  // Add-on breakdown
+  const downgradeNote = downgradeCount > 0
+    ? ` <span style="color:#9ca3af">&nbsp;·&nbsp; ${downgradeCount} plan(s) hidden — they would remove features your base plan includes (e.g. desktop apps, Teams, or Exchange).</span>`
+    : '';
+  html += `<p style="font-size:0.8rem;color:#6b7280;margin-bottom:1rem;">
+    Add-ons selected: <strong>${addonNames}</strong> (+$${addonCost.toFixed(2)}/user/mo on top of ${baseLic.name})${downgradeNote}
+  </p>`;
+
+  // Alternatives table
+  if (results.length === 0) {
+    html += `<p class="adv-empty">No alternative plans to compare for this combination.</p>`;
+  } else {
+    html += `<div style="overflow-x:auto"><table class="adv-alt-table">
+      <thead><tr>
+        <th>Alternative Plan</th>
+        <th>$/user/mo</th>
+        <th>Monthly (${seats} seats)</th>
+        <th>vs. Your Bundle</th>
+        <th>Add-ons Covered</th>
+      </tr></thead><tbody>`;
+
+    results.forEach(r => {
+      const lic     = LICENSES_MAP[r.pid];
+      const diffStr = r.diff === 0 ? '—'
+                    : r.diff < 0  ? `<span class="saving">Save $${Math.abs(r.diff).toFixed(2)}/mo</span>`
+                                  : `<span class="costing">+$${r.diff.toFixed(2)}/mo more</span>`;
+      const coversPct = needed.size > 0 ? r.covers.length / needed.size : 0;
+      const coversBadge = r.missing.length === 0
+        ? `<span class="covers-badge covers-all">All ${needed.size} included</span>`
+        : `<span class="covers-badge covers-part">${r.covers.length}/${needed.size} included</span>`;
+      const missingNote = r.missing.length
+        ? `<br><span style="font-size:0.72rem;color:#9ca3af">Still needs: ${r.missing.map(id => LICENSES_MAP[id]?.name || id).join(', ')}</span>`
+        : '';
+
+      html += `<tr>
+        <td><strong>${lic.name}</strong> <span class="badge badge-${lic.tier}" style="font-size:0.62rem">${lic.tier}</span></td>
+        <td>$${r.altCostPer.toFixed(2)}</td>
+        <td>$${r.altMonthly.toFixed(2)}</td>
+        <td>${diffStr}</td>
+        <td>${coversBadge}${missingNote}</td>
+      </tr>`;
+    });
+
+    html += `</tbody></table></div>`;
+
+    // Highlight best option
+    const best = results.find(r => r.missing.length === 0 && r.diff <= 0);
+    if (best) {
+      const blic = LICENSES_MAP[best.pid];
+      html += `<p style="margin-top:1rem;font-size:0.82rem;color:#059669;font-weight:600;">
+        Recommendation: <strong>${blic.name}</strong> covers all selected add-ons and saves
+        $${Math.abs(best.diff).toFixed(2)}/mo ($${(Math.abs(best.diff)*12).toFixed(2)}/yr) vs. your current bundle.
+      </p>`;
+    } else {
+      const cheapestFull = results.find(r => r.missing.length === 0);
+      if (cheapestFull) {
+        const clic = LICENSES_MAP[cheapestFull.pid];
+        html += `<p style="margin-top:1rem;font-size:0.82rem;color:#2563eb;font-weight:600;">
+          Note: <strong>${clic.name}</strong> is the most affordable plan that covers all selected add-ons
+          at $${cheapestFull.altCostPer.toFixed(2)}/user/mo.
+        </p>`;
+      }
+    }
+  }
+
+  resultsEl.innerHTML = html;
+}
+
+// ── NCE Billing ────────────────────────────────────────────────────────────
+const BILLING_MULT = { 'annual-annual': 1.00, 'annual-monthly': 1.05, 'monthly-monthly': 1.20 };
+let currentBilling = 'annual-annual';
+
+function getBillingMult() { return BILLING_MULT[currentBilling]; }
+
+function setBilling(radio) {
+  currentBilling = radio.value;
+  document.querySelectorAll('.billing-opt').forEach(el => {
+    el.classList.toggle('selected', el.querySelector('input').value === currentBilling);
+  });
+  updateCardPrices();
+  updateSummary();
+  runAdvisor();
+}
+
+function updateCardPrices() {
+  // Update static pricing card price-amount spans using stored base prices
+  document.querySelectorAll('.price-amount[data-base]').forEach(el => {
+    const base = parseFloat(el.dataset.base);
+    const adj  = base * getBillingMult();
+    el.textContent = base === 0 ? '$0' : '$' + adj.toFixed(2);
+  });
+}
+
+function initCardPrices() {
+  // Store base price on each price-amount span in the pricing cards tab
+  document.querySelectorAll('#tab-pricing .price-amount').forEach(el => {
+    const raw = el.textContent.replace(/[^0-9.]/g, '');
+    const base = parseFloat(raw);
+    if (!isNaN(base)) el.dataset.base = base;
+  });
+}
+
+// ── Init ────────────────────────────────────────────────────────────────────
+buildPlanner();
+buildAdvisor();
+initCardPrices();
+document.getElementById('adv-base').addEventListener('change', () => { refreshAddonList(); });
+document.getElementById('client-name').addEventListener('input', updateSummary);
+</script>
+</body>
+</html>
