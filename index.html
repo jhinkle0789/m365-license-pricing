@@ -49,6 +49,9 @@
     .badge-enterprise { background: #ede9fe; color: #6d28d9; }
     .badge-addon      { background: #fef3c7; color: #92400e; }
     .badge-o365       { background: #fee2e2; color: #991b1b; }
+    .badge-watchguard { background: #cffafe; color: #164e63; }
+    .badge-protect    { background: #ffedd5; color: #9a3412; }
+    .badge-shield     { background: #ede9fe; color: #4c1d95; }
 
     /* ── Client Planner ── */
     .planner-header {
@@ -250,7 +253,7 @@
   </header>
 
   <!-- Billing type selector -->
-  <div class="billing-bar">
+  <div class="billing-bar" id="billing-bar" style="display:none">
     <span>NCE Billing Type:</span>
     <label class="billing-opt selected" id="blbl-annual-annual">
       <input type="radio" name="billing" value="annual-annual" checked onchange="setBilling(this)">
@@ -267,14 +270,15 @@
   </div>
 
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('planner')">Client Planner</button>
+    <button class="tab-btn active" onclick="switchTab('secure')">Current Licenses</button>
+    <button class="tab-btn" onclick="switchTab('planner')">Client Planner</button>
     <button class="tab-btn" onclick="switchTab('advisor')">Upgrade Advisor</button>
     <button class="tab-btn" onclick="switchTab('compare')">Feature Comparison</button>
     <button class="tab-btn" onclick="switchTab('pricing')">All Plans</button>
   </div>
 
   <!-- ══════════ PLANNER ══════════ -->
-  <div class="tab-panel active" id="tab-planner">
+  <div class="tab-panel" id="tab-planner">
     <div class="planner-header">
       <div class="field-group">
         <label for="client-name">Client Name</label>
@@ -825,17 +829,51 @@
 
   </div><!-- /tab-pricing -->
 
-  <footer>
-    Prices reflect official Microsoft list pricing effective July 1, 2026 (annual subscription, USD). Verified August 2026. Sources:
-    <a href="https://www.microsoft.com/en-us/licensing/news/2026-m365-packaging-pricing-updates" target="_blank">2026 Pricing Updates</a> ·
-    <a href="https://www.microsoft.com/en-us/microsoft-365/enterprise/microsoft365-plans-and-pricing" target="_blank">Enterprise Plans</a> ·
-    <a href="https://www.microsoft.com/en-us/security/business/microsoft-entra-pricing" target="_blank">Entra Pricing</a> ·
-    <a href="https://www.microsoft.com/en-us/security/microsoft-intune-pricing" target="_blank">Intune Pricing</a> ·
-    <a href="https://www.microsoft.com/en-us/microsoft-teams/compare-microsoft-teams-options" target="_blank">Teams Pricing</a>.
-    Always verify at microsoft.com before quoting clients.
-  </footer>
+  <!-- ══════════ CURRENT LICENSES ══════════ -->
+  <div class="tab-panel active" id="tab-secure">
+    <div class="advisor-layout">
+
+      <!-- Left: inputs -->
+      <div class="advisor-panel">
+        <h3>Current Licenses</h3>
+
+        <div class="adv-field">
+          <label for="sec-client">Client Name</label>
+          <input id="sec-client" type="text" placeholder="e.g. Acme Corp" oninput="runSecureAnalysis()">
+        </div>
+
+        <div class="adv-field">
+          <label for="sec-users">Number of Users</label>
+          <input id="sec-users" type="number" min="1" value="10" oninput="runSecureAnalysis()">
+        </div>
+
+        <div class="adv-field">
+          <label>Current Licenses</label>
+          <div id="cur-lic-rows" style="display:flex;flex-direction:column;gap:0.4rem;margin-top:0.25rem"></div>
+          <button class="btn btn-primary" style="margin-top:0.5rem;font-size:0.8rem;padding:0.35rem 0.75rem" onclick="addCurLicense()">+ Add License</button>
+        </div>
+      </div>
+
+      <!-- Right: results -->
+      <div id="sec-results">
+        <p class="adv-empty">Select a bundle and enter the customer's current Microsoft license to see the transition plan.</p>
+      </div>
+
+    </div>
+
+  </div>
 
 </div><!-- /container -->
+
+<footer>
+  Prices reflect official Microsoft list pricing effective July 1, 2026 (annual subscription, USD). Verified August 2026. Sources:
+  <a href="https://www.microsoft.com/en-us/licensing/news/2026-m365-packaging-pricing-updates" target="_blank">2026 Pricing Updates</a> ·
+  <a href="https://www.microsoft.com/en-us/microsoft-365/enterprise/microsoft365-plans-and-pricing" target="_blank">Enterprise Plans</a> ·
+  <a href="https://www.microsoft.com/en-us/security/business/microsoft-entra-pricing" target="_blank">Entra Pricing</a> ·
+  <a href="https://www.microsoft.com/en-us/security/microsoft-intune-pricing" target="_blank">Intune Pricing</a> ·
+  <a href="https://www.microsoft.com/en-us/microsoft-teams/compare-microsoft-teams-options" target="_blank">Teams Pricing</a>.
+  Always verify at microsoft.com before quoting clients.
+</footer>
 
 <script>
 // ── License data ───────────────────────────────────────────────────────────
@@ -890,6 +928,35 @@ const LICENSES_MAP = {
   copent:    { name:'Copilot (Enterprise)',               price:30.00, tier:'addon'      },
   agent365:  { name:'Agent 365',                         price:15.00, tier:'addon'      },
   wine3:     { name:'Windows E3',                        price:7.63,  tier:'addon'      },
+};
+
+// ── Special-sector pricing (Non-profit / Education / Government) ────────────
+// Nonprofit: Microsoft for Nonprofits program (same SKUs, donated/discounted).
+// Education: Approximate A-plan faculty-equivalent pricing (A-series SKUs).
+// Government: Approximate GCC G-plan equivalent pricing.
+// All values are approximate — verify current rates via Microsoft Partner Portal.
+const SECTOR_PRICES = {
+  nonprofit: {
+    f1:0.00,  f3:4.00,  apps:4.00,
+    bsc:3.00, std:3.00, prm:5.50,
+    o365e1:3.00, o365e3:6.00, o365e5:14.00,
+    appsent:6.00, e3:12.50, e5:18.00,
+    entrap1:3.00, entrap2:4.50, entras:7.00,
+    int1:3.00, int2:2.00, ints:5.00,
+  },
+  education: {
+    bsc:4.00,    std:9.50,    prm:18.00,
+    o365e1:3.50, o365e3:10.50, o365e5:19.00,
+    appsent:7.00, e3:10.50, e5:20.00,
+    entrap1:4.00, int1:4.00,
+  },
+  government: {
+    f1:3.00,  f3:10.00, apps:10.00,
+    bsc:7.00, std:14.00, prm:26.00,
+    o365e1:10.00, o365e3:26.00, o365e5:41.00,
+    appsent:14.00, e3:42.00, e5:65.00,
+    entrap1:7.00, int1:8.00,
+  },
 };
 
 // ── Feature matrix (main suite plans only) ─────────────────────────────────
@@ -948,6 +1015,635 @@ const FEATURES = [
   { label:'Agent 365',                   f1:false,     f3:false,     apps:false,     bsc:false,    std:false,    prm:false,   o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:false,      e7:true       },
   { label:'MileIQ',                      f1:false,     f3:false,     apps:false,     bsc:false,    std:true,     prm:true,    o365e1:false,   o365e3:false,   o365e5:false,   appsent:false,  e3:false,       e5:false,      e7:false      },
 ];
+
+// ── Secure Bundles data ────────────────────────────────────────────────────
+const SECURE_BUNDLES = [
+  { id: 'watchguard', name: 'GI Watch + Guard', tier: 'watchguard', badgeLabel: 'Watch + Guard' },
+  { id: 'protect',    name: 'GI Protect',        tier: 'protect',    badgeLabel: 'Protect'       },
+  { id: 'shield',     name: 'GI Shield',          tier: 'shield',     badgeLabel: 'Shield'        },
+];
+
+const SECURE_CATS = [
+  { label: 'Foundation', items: [
+    { component: 'PC Watch',                                                                         platform: 'ScreenConnect',                                   watchguard: true,  protect: true,  shield: true  },
+    { component: 'ServerWatch',                                                                      platform: 'ScreenConnect',                                   watchguard: true,  protect: true,  shield: true  },
+    { component: 'NetWatch',                                                                         platform: 'LogicMonitor',                                    watchguard: true,  protect: true,  shield: true  },
+    { component: 'Backup (onsite + offsite/cloud)',                                                  platform: 'Axcient',                                         watchguard: true,  protect: true,  shield: true  },
+    { component: 'Backup 365 - Cloud &amp; Licensing',                                              platform: 'ConnectWise',                                     watchguard: true,  protect: true,  shield: true  },
+    { component: 'Backup of Email Data',                                                             platform: 'ConnectWise Recover SaaS',                        watchguard: true,  protect: true,  shield: true  },
+    { component: '24x7 Support',                                                                     platform: 'GI Service',                                      watchguard: true,  protect: true,  shield: true  },
+    { component: 'Tenant Management',                                                                platform: 'Nerdio',                                          watchguard: true,  protect: true,  shield: true  },
+    { component: 'Support Engagement with Soft button',                                              platform: 'HelpDesk Button',                                 watchguard: true,  protect: true,  shield: true  },
+  ]},
+  { label: 'Security', items: [
+    { component: 'Multifactor Authentication (MFA)',                                                 platform: 'DUO',                                             watchguard: true,  protect: true,  shield: true  },
+    { component: 'Advanced Email Security',                                                          platform: 'CheckPoint',                                      watchguard: true,  protect: true,  shield: true  },
+    { component: 'Security Awareness Training (SAT) + Simulated Phishing',                          platform: 'KnowBe4',                                         watchguard: true,  protect: true,  shield: true  },
+    { component: 'Endpoint Detection &amp; Response + Managed Detection &amp; Response (EDR+MDR)',  platform: 'SentinelOne Complete + SentinelOne Vigilence MDR', watchguard: true,  protect: true,  shield: true  },
+    { component: 'Identity Threat Detection &amp; Response (ITDR)',                                  platform: 'Petra Security',                                  watchguard: true,  protect: true,  shield: true  },
+  ]},
+  { label: 'Advanced Security', items: [
+    { component: 'Penetration Testing',                                                              platform: 'Horizon3.ai',                                     watchguard: false, protect: true,  shield: true  },
+    { component: 'XDR-SIEM',                                                                        platform: 'Cynet',                                           watchguard: false, protect: true,  shield: true  },
+    { component: '24/7 SOC Monitoring',                                                             platform: 'Cynet CyOps',                                     watchguard: false, protect: true,  shield: true  },
+  ]},
+  { label: 'Governance', items: [
+    { component: 'GRC Platform',                                                                     platform: 'Cynomi',                                          watchguard: false, protect: false, shield: true  },
+    { component: 'vCISO',                                                                            platform: 'GI Advisory Services',                            watchguard: false, protect: false, shield: true  },
+  ]},
+];
+
+// Which add-ons each plan needs to be fully Secure-bundle compatible
+// Secure bundle requires: Exchange + Entra ID P1 + Intune Plan 1
+const PLAN_SECURE_NEEDS = {
+  f1:      { addons: ['entrap1'],        missingExchange: false, note: 'F1 already includes Intune — only Entra ID P1 needed.' },
+  f3:      { addons: [],                 missingExchange: false, note: '' },
+  apps:    { addons: ['entrap1','int1'], missingExchange: true,  note: 'Apps for Business has no Exchange — email security cannot be fully deployed. Strongly recommend switching to Business Premium.' },
+  bsc:     { addons: ['entrap1','int1'], missingExchange: false, note: '' },
+  std:     { addons: ['entrap1','int1'], missingExchange: false, note: '' },
+  prm:     { addons: [],                 missingExchange: false, note: '' },
+  o365e1:  { addons: ['entrap1','int1'], missingExchange: false, note: '' },
+  o365e3:  { addons: ['entrap1','int1'], missingExchange: false, note: 'O365 E3 has no Intune or Entra P1. Business Premium cap is 300 users — M365 E3 recommended if over limit.' },
+  o365e5:  { addons: ['int1'],           missingExchange: false, note: 'O365 E5 includes advanced Entra features but not Intune.' },
+  appsent: { addons: ['entrap1','int1'], missingExchange: true,  note: 'M365 Apps for Enterprise has no Exchange. An email plan is required alongside.' },
+  e3:      { addons: [],                 missingExchange: false, note: '' },
+  e5:      { addons: [],                 missingExchange: false, note: '' },
+  e7:      { addons: [],                 missingExchange: false, note: '' },
+};
+
+// ── Secure Bundle license state ────────────────────────────────────────────
+
+const MAIN_PLAN_SET = new Set(['f1','f3','apps','bsc','std','prm','o365e1','o365e3','o365e5','appsent','e3','e5','e7']);
+
+const CUR_LIC_GROUPS = [
+  { label: 'Frontline',                ids: ['f1','f3'] },
+  { label: 'Business (≤300 users)',    ids: ['apps','bsc','std','prm'] },
+  { label: 'Office 365 Enterprise',    ids: ['o365e1','o365e3','o365e5'] },
+  { label: 'M365 Enterprise',          ids: ['appsent','e3','e5','e7'] },
+  { label: 'Security Add-ons',         ids: ['e5s','e5c'] },
+  { label: 'Teams',                    ids: ['tess','tent','tphn','tphnz1','tprm','troomspro'] },
+  { label: 'Entra ID',                 ids: ['entrafree','entrap1','entrap2','entras'] },
+  { label: 'Intune',                   ids: ['int1','int2','ints','intrh','intepm','intaa','inteam','intpki'] },
+  { label: 'Copilot & AI',             ids: ['copbiz','copent','agent365'] },
+  { label: 'Windows',                  ids: ['wine3'] },
+];
+
+function buildCurLicRowHTML() {
+  let opts = '<option value="">— Select plan —</option>';
+  CUR_LIC_GROUPS.forEach(g => {
+    opts += `<optgroup label="${g.label}">`;
+    g.ids.forEach(id => {
+      const lic = LICENSES_MAP[id];
+      if (!lic) return;
+      opts += `<option value="${id}">${lic.name} ($${lic.price.toFixed(2)}/${lic.unit || 'user'}/mo)</option>`;
+    });
+    opts += '</optgroup>';
+  });
+  return `
+    <div class="cur-lic-row" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:0.5rem 0.6rem;display:flex;flex-direction:column;gap:0.35rem">
+      <div style="display:flex;gap:0.4rem;align-items:center">
+        <select class="cur-lic-plan" onchange="runSecureAnalysis()" style="flex:1;padding:0.35rem 0.5rem;border:1px solid #d1d5db;border-radius:6px;font-size:0.78rem;font-family:inherit;background:#fff;min-width:0">
+          ${opts}
+        </select>
+        <button onclick="removeCurLicense(this)" style="background:none;border:none;color:#9ca3af;cursor:pointer;font-size:1.25rem;padding:0 0.15rem;line-height:1;flex-shrink:0" title="Remove">×</button>
+      </div>
+      <div style="display:flex;gap:0.5rem;align-items:center">
+        <label style="font-size:0.72rem;color:#6b7280;white-space:nowrap;font-weight:500">Total:</label>
+        <input type="number" class="cur-lic-total" min="1" value="1" oninput="runSecureAnalysis()" style="width:62px;padding:0.3rem 0.45rem;border:1px solid #d1d5db;border-radius:6px;font-size:0.82rem;text-align:center;font-family:inherit;flex-shrink:0">
+        <label style="font-size:0.72rem;color:#6b7280;white-space:nowrap;font-weight:500">Assigned:</label>
+        <input type="number" class="cur-lic-assigned" min="0" placeholder="—" oninput="runSecureAnalysis()" style="width:62px;padding:0.3rem 0.45rem;border:1px solid #d1d5db;border-radius:6px;font-size:0.82rem;text-align:center;font-family:inherit;flex-shrink:0">
+      </div>
+      <select class="cur-lic-billing" onchange="runSecureAnalysis()" style="width:100%;padding:0.25rem 0.4rem;border:1px solid #d1d5db;border-radius:6px;font-size:0.75rem;font-family:inherit;background:#fff;color:#374151">
+        <option value="annual-annual">Annual / Annual</option>
+        <option value="annual-monthly">Annual / Monthly (+5%)</option>
+        <option value="monthly-monthly">Monthly (+20%)</option>
+      </select>
+      <div style="display:flex;align-items:center;gap:0.4rem">
+        <label style="font-size:0.72rem;color:#6b7280;white-space:nowrap;font-weight:500">Renewal/Expiration Date:</label>
+        <input type="date" class="cur-lic-expiry" onchange="runSecureAnalysis()" style="flex:1;padding:0.25rem 0.4rem;border:1px solid #d1d5db;border-radius:6px;font-size:0.78rem;font-family:inherit;min-width:0">
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;padding-top:0.1rem;border-top:1px solid #e5e7eb">
+        <span style="font-size:0.7rem;color:#6b7280;font-weight:600;white-space:nowrap">Special Pricing:</span>
+        <label style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.72rem;color:#059669;cursor:pointer;white-space:nowrap;user-select:none">
+          <input type="checkbox" class="cur-lic-sector" data-sector="nonprofit" onchange="toggleSector(this)"> Non-profit
+        </label>
+        <label style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.72rem;color:#2563eb;cursor:pointer;white-space:nowrap;user-select:none">
+          <input type="checkbox" class="cur-lic-sector" data-sector="education" onchange="toggleSector(this)"> Education
+        </label>
+        <label style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.72rem;color:#7c3aed;cursor:pointer;white-space:nowrap;user-select:none">
+          <input type="checkbox" class="cur-lic-sector" data-sector="government" onchange="toggleSector(this)"> Government (GCC)
+        </label>
+        <span style="font-size:0.66rem;color:#9ca3af;margin-left:0.25rem">*Approximate — verify with Microsoft</span>
+      </div>
+    </div>`;
+}
+
+function addCurLicense() {
+  const container = document.getElementById('cur-lic-rows');
+  const wrapper   = document.createElement('div');
+  wrapper.innerHTML = buildCurLicRowHTML();
+  container.appendChild(wrapper.firstElementChild);
+  runSecureAnalysis();
+}
+
+function removeCurLicense(btn) {
+  btn.closest('.cur-lic-row').remove();
+  runSecureAnalysis();
+}
+
+function initSecureTab() {
+  if (document.querySelector('#cur-lic-rows > div')) return;
+  addCurLicense();
+}
+
+function runSecureAnalysis() {
+  const client       = document.getElementById('sec-client').value.trim();
+  const users        = parseInt(document.getElementById('sec-users').value) || 0;
+  const resultsEl    = document.getElementById('sec-results');
+
+  // Collect current license rows
+  const curLicsList = [...document.querySelectorAll('#cur-lic-rows > div')].map(row => {
+    const total    = parseInt(row.querySelector('.cur-lic-total')?.value) || 0;
+    const assigned = parseInt(row.querySelector('.cur-lic-assigned')?.value);
+    const sectorCb = row.querySelector('.cur-lic-sector:checked');
+    return {
+      planId:    row.querySelector('.cur-lic-plan')?.value || '',
+      seats:     total,
+      assigned:  isNaN(assigned) ? null : assigned,
+      billing:   row.querySelector('.cur-lic-billing')?.value || 'annual-annual',
+      expiryStr: row.querySelector('.cur-lic-expiry')?.value || '',
+      sector:    sectorCb ? sectorCb.dataset.sector : 'commercial',
+    };
+  }).filter(l => l.planId && l.seats > 0);
+
+  if (users < 1 || curLicsList.length === 0) {
+    resultsEl.innerHTML = '<p class="adv-empty">Enter the customer\'s current licenses and renewal date to see the transition plan.</p>';
+    return;
+  }
+
+  // Separate main suite plans from add-ons; primary = highest-priced suite plan
+  const mainRows = curLicsList.filter(l => MAIN_PLAN_SET.has(l.planId))
+    .sort((a, b) => LICENSES_MAP[b.planId].price - LICENSES_MAP[a.planId].price);
+
+  if (mainRows.length === 0) {
+    resultsEl.innerHTML = '<p class="adv-empty">Add at least one Microsoft 365 suite plan (e.g. Business Standard, Business Premium) to analyze compatibility.</p>';
+    return;
+  }
+
+  const primaryLic   = mainRows[0];
+  const curPlan      = LICENSES_MAP[primaryLic.planId];
+  const needs        = PLAN_SECURE_NEEDS[primaryLic.planId];
+  const newMult      = BILLING_MULT[primaryLic.billing];
+  const billingLabel = { 'annual-annual':'Annual/Annual', 'annual-monthly':'Annual/Monthly (+5%)', 'monthly-monthly':'Monthly (+20%)' }[primaryLic.billing];
+
+  const expiryStr = primaryLic.expiryStr;
+  if (!expiryStr) {
+    resultsEl.innerHTML = `<p class="adv-empty">Set a renewal date on the <strong>${curPlan.name}</strong> row to see the transition timeline.</p>`;
+    return;
+  }
+
+  const expiry     = new Date(expiryStr + 'T00:00:00');
+  const today      = new Date(); today.setHours(0,0,0,0);
+  const daysLeft   = Math.ceil((expiry - today) / 86400000);
+  const monthsLeft = Math.max(0, daysLeft / 30.44);
+
+  // Current total cost across ALL license rows (each may have its own billing type)
+  const curTotalMonthly = curLicsList.reduce((s, l) => s + getPlanPrice(l.planId, l.sector) * BILLING_MULT[l.billing] * l.seats, 0);
+
+  // Target: Business Premium ≤300 users, M365 E3 for larger
+  const targetId          = users <= 300 ? 'prm' : 'e3';
+  const targetPlan        = LICENSES_MAP[targetId];
+  const targetCostPerUser = getPlanPrice(targetId, primaryLic.sector) * newMult;
+  const targetMonthly     = targetCostPerUser * users;
+
+  // Interim: current total + add-ons needed for primary plan seats
+  const addonIds            = needs.addons;
+  const interimAddonIds     = addonIds.includes('entrap1') ? ['entrap1'] : addonIds;
+  const interimCostPerUser  = interimAddonIds.reduce((s, id) => s + getPlanPrice(id, primaryLic.sector), 0);
+  const interimExtraCost    = interimCostPerUser * primaryLic.seats * BILLING_MULT[primaryLic.billing];
+  const interimTotalMonthly = curTotalMonthly + interimExtraCost;
+  const saving              = (targetMonthly - interimTotalMonthly) * monthsLeft;
+
+  const isCompatible = addonIds.length === 0 && !needs.missingExchange;
+  const expiryFmt    = expiry.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  let html = client
+    ? `<h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin-bottom:1rem">${client} — Transition Plan</h3>`
+    : `<h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin-bottom:1rem">Transition Plan</h3>`;
+
+  // Current situation bar
+  html += `<div class="adv-current" style="margin-bottom:1rem;flex-wrap:wrap;gap:1rem">
+    <div class="adv-current-stat"><span>Current $/mo</span><span>$${curTotalMonthly.toFixed(2)}</span></div>
+    <div class="adv-current-stat"><span>Primary Renewal</span><span style="font-size:0.85rem">${expiryFmt}</span></div>
+    <div class="adv-current-stat"><span>Days Left</span><span style="${daysLeft < 90 && daysLeft > 0 ? 'color:#fb923c' : ''}">${daysLeft > 0 ? daysLeft + 'd' : 'Expired'}</span></div>
+  </div>`;
+
+  // Per-license breakdown
+  const wastedLics = [];
+  let totalWasteMo = 0;
+  html += `<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:0.75rem 1rem;margin-bottom:1rem">
+    <p style="font-size:0.72rem;font-weight:700;color:#374151;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.07em">Current Licenses</p>
+    <table style="width:100%;font-size:0.8rem;border-collapse:collapse">
+      <thead><tr style="color:#9ca3af;font-size:0.72rem;border-bottom:1px solid #e5e7eb">
+        <th style="text-align:left;font-weight:600;padding:0.2rem 0">Plan</th>
+        <th style="text-align:center;font-weight:600;padding:0.2rem 0.25rem">Total</th>
+        <th style="text-align:center;font-weight:600;padding:0.2rem 0.25rem">Used</th>
+        <th style="text-align:center;font-weight:600;padding:0.2rem 0.25rem">Unused</th>
+        <th style="text-align:right;font-weight:600;padding:0.2rem 0">$/mo</th>
+        <th style="text-align:right;font-weight:600;padding:0.2rem 0 0.2rem 0 0.2rem 0.5rem;color:#dc2626">Waste/mo</th>
+      </tr></thead>
+      <tbody>${curLicsList.map(l => {
+        const lic        = LICENSES_MAP[l.planId];
+        const mult       = BILLING_MULT[l.billing];
+        const price      = getPlanPrice(l.planId, l.sector);
+        const mo         = price * mult * l.seats;
+        const hasAssigned = l.assigned !== null;
+        const unassigned  = hasAssigned ? Math.max(0, l.seats - l.assigned) : null;
+        const wasteMo     = hasAssigned ? price * mult * unassigned : 0;
+        if (hasAssigned) { totalWasteMo += wasteMo; if (wasteMo > 0) wastedLics.push({ name: lic.name, wasted: unassigned, wasteMo, billing: l.billing, expiryStr: l.expiryStr }); }
+        const wasteCell = hasAssigned
+          ? (wasteMo > 0 ? `<span style="color:#dc2626;font-weight:600">$${wasteMo.toFixed(2)}</span>` : '<span style="color:#16a34a">$0.00</span>')
+          : '<span style="color:#d1d5db">—</span>';
+        return `<tr>
+          <td style="padding:0.2rem 0;color:#0f172a">${lic.name}</td>
+          <td style="text-align:center;padding:0.2rem 0.25rem;color:#6b7280">${l.seats}</td>
+          <td style="text-align:center;padding:0.2rem 0.25rem;color:#6b7280">${hasAssigned ? l.assigned : '<span style="color:#d1d5db">—</span>'}</td>
+          <td style="text-align:center;padding:0.2rem 0.25rem;color:${unassigned > 0 ? '#dc2626' : '#6b7280'}">${unassigned !== null ? unassigned : '<span style="color:#d1d5db">—</span>'}</td>
+          <td style="text-align:right;font-weight:600;padding:0.2rem 0">$${mo.toFixed(2)}</td>
+          <td style="text-align:right;padding:0.2rem 0 0.2rem 0.5rem">${wasteCell}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>
+  </div>`;
+
+  // Waste summary card
+  if (totalWasteMo > 0) {
+    const hasAnnualWaste   = wastedLics.some(l => l.billing !== 'monthly-monthly');
+    const hasMonthlyWaste  = wastedLics.some(l => l.billing === 'monthly-monthly');
+    html += `<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
+      <p style="font-size:0.875rem;font-weight:700;color:#991b1b">💸 Unassigned License Waste</p>
+      <div style="display:flex;gap:1.5rem;margin-top:0.5rem">
+        <div><p style="font-size:0.72rem;color:#9ca3af;margin-bottom:0.1rem">Monthly waste</p><p style="font-size:1rem;font-weight:800;color:#dc2626">$${totalWasteMo.toFixed(2)}</p></div>
+        <div><p style="font-size:0.72rem;color:#9ca3af;margin-bottom:0.1rem">Annual waste</p><p style="font-size:1rem;font-weight:800;color:#dc2626">$${(totalWasteMo*12).toFixed(2)}</p></div>
+      </div>
+      <div style="margin-top:0.6rem;border-top:1px solid #fca5a5;padding-top:0.5rem">
+        <table style="width:100%;font-size:0.73rem;border-collapse:collapse;border:1px solid #fca5a5">
+          <thead><tr>
+            <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #fca5a5;border-right:1px solid #fca5a5">Plan</th>
+            <th style="text-align:center;padding:0.3rem 0.5rem;color:#991b1b;font-weight:700;border-bottom:2px solid #fca5a5;border-right:1px solid #fca5a5">Wasted</th>
+            <th style="text-align:right;padding:0.3rem 0.5rem;color:#991b1b;font-weight:700;border-bottom:2px solid #fca5a5;border-right:1px solid #fca5a5">Waste/mo</th>
+            <th style="text-align:right;padding:0.3rem 0.5rem;color:#991b1b;font-weight:700;border-bottom:2px solid #fca5a5;border-right:1px solid #fca5a5">Billing Term</th>
+            <th style="text-align:right;padding:0.3rem 0.5rem;color:#991b1b;font-weight:700;border-bottom:2px solid #fca5a5">Earliest Correction</th>
+          </tr></thead>
+          <tbody>${wastedLics.map(l => {
+            const isAnnual  = l.billing !== 'monthly-monthly';
+            const termLabel = l.billing === 'monthly-monthly' ? 'Monthly' : (l.billing === 'annual-monthly' ? 'Annual (mo. billing)' : 'Annual');
+            const corrDate  = (() => {
+              if (!l.expiryStr) return isAnnual ? 'At renewal' : 'Next billing cycle';
+              const d = new Date(l.expiryStr + 'T00:00:00');
+              const fmt = d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+              return (isAnnual ? 'At renewal · ' : 'Next renewal · ') + fmt;
+            })();
+            return `<tr>
+              <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #fee2e2;border-right:1px solid #fca5a5">${l.name}</td>
+              <td style="text-align:center;padding:0.25rem 0.5rem;color:#dc2626;font-weight:600;border-bottom:1px solid #fee2e2;border-right:1px solid #fca5a5">${l.wasted} seats</td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;color:#dc2626;font-weight:600;border-bottom:1px solid #fee2e2;border-right:1px solid #fca5a5">$${l.wasteMo.toFixed(2)}</td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;color:#6b7280;border-bottom:1px solid #fee2e2;border-right:1px solid #fca5a5">${termLabel}</td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:500;color:${isAnnual ? '#b45309' : '#059669'}">${corrDate}</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>
+        ${hasAnnualWaste ? `<p style="font-size:0.72rem;color:#b45309;margin-top:0.4rem">⚠ NCE annual subscriptions lock seat counts for the commitment term — seats cannot be removed until renewal.</p>` : ''}
+        ${!hasAnnualWaste ? `<p style="font-size:0.72rem;color:#059669;margin-top:0.4rem">✓ All waste is on monthly subscriptions and can be corrected at the next billing cycle.</p>` : ''}
+      </div>
+    </div>`;
+  }
+
+  // ── Conditional Access section ─────────────────────────────────────────────
+  const needsEntraP1    = needs.addons.includes('entrap1');
+  const hasEntraP1Addon = curLicsList.some(l => l.planId === 'entrap1');
+  const primBillingMult  = BILLING_MULT[primaryLic.billing];
+  const entraP1PricePrim = getPlanPrice('entrap1', primaryLic.sector);
+  const entraAddonMo     = entraP1PricePrim * primBillingMult * primaryLic.seats;
+
+  if (!needsEntraP1 || hasEntraP1Addon) {
+    html += `<div style="background:#d1fae5;border:1px solid #6ee7b7;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
+      <p style="font-size:0.875rem;font-weight:700;color:#065f46">✓ Azure Conditional Access Ready</p>
+      <p style="font-size:0.8rem;color:#047857;margin-top:0.2rem">${!needsEntraP1 ? curPlan.name + ' includes Entra ID P1' : 'Entra ID P1 is already on this account'} — Azure Conditional Access is available.</p>
+    </div>`;
+  } else {
+    // All main suite plans that need Entra P1 (not just primary)
+    const entraNeededRows = mainRows.filter(l => PLAN_SECURE_NEEDS[l.planId]?.addons.includes('entrap1'));
+    const upgradeableRows = entraNeededRows.filter(l => ['bsc','std'].includes(l.planId));
+    const canUpgrade      = upgradeableRows.length > 0;
+
+    // Sum Entra P1 addon cost across all plans that need it (per-row sector pricing)
+    const totalEntraAddonMo = entraNeededRows.reduce((s, l) =>
+      s + getPlanPrice('entrap1', l.sector) * BILLING_MULT[l.billing] * l.seats, 0);
+
+    // Sum upgrade cost across all bsc/std plans (per-row sector pricing)
+    const totalUpgradeMo = upgradeableRows.reduce((s, l) =>
+      s + (getPlanPrice('prm', l.sector) - getPlanPrice(l.planId, l.sector)) * BILLING_MULT[l.billing] * l.seats, 0);
+
+    // Seat counts: licensed (assigned) vs total (including unused)
+    const rsSeat            = l => l.assigned !== null ? Math.max(0, Math.min(l.assigned, l.seats)) : l.seats;
+    const rsEntraAddonMo    = entraNeededRows.reduce((s, l) => s + getPlanPrice('entrap1', l.sector) * BILLING_MULT[l.billing] * rsSeat(l), 0);
+    const rsUpgradeMo       = upgradeableRows.reduce((s, l) => s + (getPlanPrice('prm', l.sector) - getPlanPrice(l.planId, l.sector)) * BILLING_MULT[l.billing] * rsSeat(l), 0);
+    const rsPrmTotalMo      = upgradeableRows.reduce((s, l) => s + getPlanPrice('prm', l.sector) * BILLING_MULT[l.billing] * rsSeat(l), 0);
+    const totPrmTotalMo     = upgradeableRows.reduce((s, l) => s + getPlanPrice('prm', l.sector) * BILLING_MULT[l.billing] * l.seats, 0);
+    const licensedUpgrade   = upgradeableRows.reduce((s, l) => s + rsSeat(l), 0);
+    const totalUpgradeSeats = upgradeableRows.reduce((s, l) => s + l.seats, 0);
+    const licensedEntra     = entraNeededRows.reduce((s, l) => s + rsSeat(l), 0);
+    const totalEntraSeats   = entraNeededRows.reduce((s, l) => s + l.seats, 0);
+    const wastedUpgrade     = totalUpgradeSeats - licensedUpgrade;
+    const wastedEntra       = totalEntraSeats - licensedEntra;
+    const wasteUpgradeMo    = totalUpgradeMo - rsUpgradeMo;
+    const wasteEntraMo      = totalEntraAddonMo - rsEntraAddonMo;
+    const hasWasteInCA      = entraNeededRows.some(l => l.assigned !== null && l.assigned < l.seats);
+    // Current license cost for entra-affected rows (to show combined total with add-on)
+    const rsCurEntraMo      = entraNeededRows.reduce((s, l) => s + getPlanPrice(l.planId, l.sector) * BILLING_MULT[l.billing] * rsSeat(l), 0);
+    const totCurEntraMo     = entraNeededRows.reduce((s, l) => s + getPlanPrice(l.planId, l.sector) * BILLING_MULT[l.billing] * l.seats, 0);
+    const rsTotalWithEntra  = rsCurEntraMo + rsEntraAddonMo;
+    const totTotalWithEntra = totCurEntraMo + totalEntraAddonMo;
+
+    html += `<div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
+      <p style="font-size:0.875rem;font-weight:700;color:#92400e">⚠ Azure Conditional Access — Action Required</p>
+      <p style="font-size:0.8rem;color:#78350f;margin-top:0.2rem">Conditional Access requires at minimum Entra ID P1, which is missing from ${entraNeededRows.map(l => LICENSES_MAP[l.planId].name).join(' and ')}.</p>
+      <div style="margin-top:0.75rem;display:flex;flex-direction:column;gap:0.5rem">
+        ${canUpgrade ? `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:0.6rem 0.85rem">
+          <p style="font-size:0.8rem;font-weight:700;color:#1d4ed8">⭐ Recommended — Upgrade to Business Premium (in-place)</p>
+          <p style="font-size:0.78rem;color:#1e40af;margin-top:0.2rem">Microsoft allows in-place upgrades within the current license term — no renewal required.</p>
+          <div style="margin-top:0.4rem;border-top:1px solid #bfdbfe;padding-top:0.35rem">
+            <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #bfdbfe">
+              <thead><tr>
+                <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #bfdbfe;border-right:1px solid #bfdbfe"></th>
+                <th style="text-align:right;padding:0.3rem 0.5rem;color:#16a34a;font-weight:700;border-bottom:2px solid #bfdbfe${hasWasteInCA ? ';border-right:1px solid #bfdbfe' : ''}">Licensed Users (${licensedUpgrade})</th>
+                ${hasWasteInCA ? `<th style='text-align:right;padding:0.3rem 0.5rem;color:#dc2626;font-weight:700;border-bottom:2px solid #bfdbfe'>Total License Count (${totalUpgradeSeats})</th>` : ''}
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #dbeafe;border-right:1px solid #bfdbfe">Monthly</td>
+                  <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#16a34a;border-bottom:1px solid #dbeafe${hasWasteInCA ? ';border-right:1px solid #bfdbfe' : ''}">$${rsPrmTotalMo.toFixed(2)}</td>
+                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#dc2626;border-bottom:1px solid #dbeafe'>$${totPrmTotalMo.toFixed(2)}</td>` : ''}
+                </tr>
+                <tr>
+                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #dbeafe;border-right:1px solid #bfdbfe">Annual</td>
+                  <td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #dbeafe${hasWasteInCA ? ';border-right:1px solid #bfdbfe' : ''}">$${(rsPrmTotalMo*12).toFixed(2)}</td>
+                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;border-bottom:1px solid #dbeafe'>$${(totPrmTotalMo*12).toFixed(2)}</td>` : ''}
+                </tr>
+                <tr>
+                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #dbeafe;border-right:1px solid #bfdbfe">Extra/mo vs. current</td>
+                  <td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #dbeafe${hasWasteInCA ? ';border-right:1px solid #bfdbfe' : ''}">+$${rsUpgradeMo.toFixed(2)}</td>
+                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;border-bottom:1px solid #dbeafe'>+$${totalUpgradeMo.toFixed(2)}</td>` : ''}
+                </tr>
+                ${hasWasteInCA ? `<tr>
+                  <td style='padding:0.25rem 0.5rem;color:#dc2626;font-size:0.72rem;border-right:1px solid #bfdbfe'>Wasted licenses</td>
+                  <td style='text-align:right;padding:0.25rem 0.5rem;color:#9ca3af;font-size:0.72rem;border-right:1px solid #bfdbfe'>—</td>
+                  <td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;font-size:0.72rem'>${wastedUpgrade} seats · +$${wasteUpgradeMo.toFixed(2)}/mo</td>
+                </tr>` : ''}
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:0.72rem;color:#3730a3;margin-top:0.25rem">Business Premium also includes Intune Plan 1 and advanced threat protection.</p>
+        </div>` : ''}
+        <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:0.6rem 0.85rem">
+          <p style="font-size:0.8rem;font-weight:700;color:#374151">${canUpgrade ? 'Alternative' : 'Option'} — Add Entra ID P1</p>
+          <p style="font-size:0.78rem;color:#6b7280;margin-top:0.2rem">Add Entra ID P1 to enable Conditional Access without changing the base plan.</p>
+          <div style="margin-top:0.4rem;border-top:1px solid #e5e7eb;padding-top:0.35rem">
+            <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #d1d5db">
+              <thead><tr>
+                <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #d1d5db;border-right:1px solid #d1d5db"></th>
+                <th style="text-align:right;padding:0.3rem 0.5rem;color:#16a34a;font-weight:700;border-bottom:2px solid #d1d5db${hasWasteInCA ? ';border-right:1px solid #d1d5db' : ''}">Licensed Users (${licensedEntra})</th>
+                ${hasWasteInCA ? `<th style='text-align:right;padding:0.3rem 0.5rem;color:#dc2626;font-weight:700;border-bottom:2px solid #d1d5db'>Total License Count (${totalEntraSeats})</th>` : ''}
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">Current licenses</td>
+                  <td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #e5e7eb${hasWasteInCA ? ';border-right:1px solid #d1d5db' : ''}">$${rsCurEntraMo.toFixed(2)}/mo</td>
+                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;border-bottom:1px solid #e5e7eb'>$${totCurEntraMo.toFixed(2)}/mo</td>` : ''}
+                </tr>
+                <tr>
+                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">+ Entra ID P1</td>
+                  <td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #e5e7eb${hasWasteInCA ? ';border-right:1px solid #d1d5db' : ''}">+$${rsEntraAddonMo.toFixed(2)}/mo</td>
+                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;border-bottom:1px solid #e5e7eb'>+$${totalEntraAddonMo.toFixed(2)}/mo</td>` : ''}
+                </tr>
+                <tr>
+                  <td style="padding:0.25rem 0.5rem;color:#4b5563;font-weight:600;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">Total monthly</td>
+                  <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#16a34a;border-bottom:1px solid #e5e7eb${hasWasteInCA ? ';border-right:1px solid #d1d5db' : ''}">$${rsTotalWithEntra.toFixed(2)}</td>
+                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#dc2626;border-bottom:1px solid #e5e7eb'>$${totTotalWithEntra.toFixed(2)}</td>` : ''}
+                </tr>
+                <tr>
+                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">Annual</td>
+                  <td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #e5e7eb${hasWasteInCA ? ';border-right:1px solid #d1d5db' : ''}">$${(rsTotalWithEntra*12).toFixed(2)}</td>
+                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;border-bottom:1px solid #e5e7eb'>$${(totTotalWithEntra*12).toFixed(2)}</td>` : ''}
+                </tr>
+                ${hasWasteInCA ? `<tr>
+                  <td style='padding:0.25rem 0.5rem;color:#dc2626;font-size:0.72rem;border-right:1px solid #d1d5db'>Wasted licenses</td>
+                  <td style='text-align:right;padding:0.25rem 0.5rem;color:#9ca3af;font-size:0.72rem;border-right:1px solid #d1d5db'>—</td>
+                  <td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;font-size:0.72rem'>${wastedEntra} seats · +$${wasteEntraMo.toFixed(2)}/mo</td>
+                </tr>` : ''}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Note if multiple suite plans
+  if (mainRows.length > 1) {
+    const others = mainRows.slice(1).map(l => `${l.seats}× ${LICENSES_MAP[l.planId].name}`).join(', ');
+    html += `<p style="font-size:0.78rem;color:#6b7280;margin-bottom:0.75rem">Compatibility analysis based on primary plan: <strong>${curPlan.name}</strong>. Other suite plans also present: ${others}.</p>`;
+  }
+
+  if (daysLeft <= 0) {
+    html += `<div style="background:#d1fae5;border:1px solid #6ee7b7;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem">
+      <p style="font-size:0.875rem;font-weight:700;color:#065f46">✓ License expired — transition to ${targetPlan.name} now</p>
+      <p style="font-size:0.8rem;color:#047857;margin-top:0.25rem">No interim period needed. Provision <strong>${targetPlan.name}</strong> at $${targetCostPerUser.toFixed(2)}/user/mo (${billingLabel}).</p>
+    </div>`;
+  } else if (isCompatible) {
+    const isHigherTier = curPlan.price > targetPlan.price && primaryLic.planId !== targetId;
+    html += `<div style="background:#d1fae5;border:1px solid #6ee7b7;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem">
+      <p style="font-size:0.875rem;font-weight:700;color:#065f46">✓ Current plan is Secure bundle compatible</p>
+      <p style="font-size:0.8rem;color:#047857;margin-top:0.25rem">${curPlan.name} includes Entra ID P1 and Intune Plan 1 — the Secure bundle can be deployed today.</p>
+    </div>`;
+    if (isHigherTier) {
+      html += `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem">
+        <p style="font-size:0.875rem;font-weight:700;color:#1d4ed8">At Renewal — ${expiryFmt}</p>
+        <p style="font-size:0.8rem;color:#1e40af;margin-top:0.25rem">Continue on ${curPlan.name} — this is enterprise tier. Transitioning to ${targetPlan.name} would be a downgrade.</p>
+      </div>`;
+    } else {
+      html += `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
+        <p style="font-size:0.875rem;font-weight:700;color:#1d4ed8">At Renewal — ${expiryFmt}</p>
+        <p style="font-size:0.78rem;color:#1e40af;margin-top:0.2rem">${primaryLic.planId === targetId ? 'Renew' : 'Transition to'} <strong>${targetPlan.name}</strong> (${billingLabel}).</p>
+        <div style="margin-top:0.5rem;border-top:1px solid #bfdbfe;padding-top:0.4rem">
+          <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #bfdbfe">
+            <thead><tr>
+              <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #bfdbfe;border-right:1px solid #bfdbfe">Plan</th>
+              <th style="text-align:right;padding:0.3rem 0.5rem;color:#1d4ed8;font-weight:700;border-bottom:2px solid #bfdbfe;border-right:1px solid #bfdbfe">Per User</th>
+              <th style="text-align:right;padding:0.3rem 0.5rem;color:#1d4ed8;font-weight:700;border-bottom:2px solid #bfdbfe;border-right:1px solid #bfdbfe">Monthly</th>
+              <th style="text-align:right;padding:0.3rem 0.5rem;color:#1d4ed8;font-weight:700;border-bottom:2px solid #bfdbfe">Annual</th>
+            </tr></thead>
+            <tbody><tr>
+              <td style="padding:0.25rem 0.5rem;color:#4b5563;border-right:1px solid #bfdbfe">${targetPlan.name}</td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;color:#1d4ed8;border-right:1px solid #bfdbfe">$${targetCostPerUser.toFixed(2)}/user</td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1d4ed8;border-right:1px solid #bfdbfe">$${targetMonthly.toFixed(2)}/mo</td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1d4ed8">$${(targetMonthly*12).toFixed(2)}/yr</td>
+            </tr></tbody>
+          </table>
+        </div>
+        ${users > 300 ? `<p style="font-size:0.72rem;color:#1e40af;margin-top:0.35rem">Business Premium capped at 300 — M365 E3 recommended for ${users} users.</p>` : ''}
+      </div>`;
+    }
+  } else {
+    const addonNames = interimAddonIds.map(id => LICENSES_MAP[id]?.name).join(' + ');
+
+    if (needs.missingExchange) {
+      html += `<div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem">
+        <p style="font-size:0.875rem;font-weight:700;color:#991b1b">⚠ Interim — Now to ${expiryFmt} (${daysLeft} days)</p>
+        <p style="font-size:0.8rem;color:#b91c1c;margin-top:0.25rem"><strong>${curPlan.name} has no Exchange mailbox</strong> — CheckPoint email security cannot function. Early upgrade to <strong>${targetPlan.name}</strong> is strongly recommended.</p>
+        ${needs.note ? `<p style="font-size:0.72rem;color:#991b1b;margin-top:0.4rem">${needs.note}</p>` : ''}
+      </div>`;
+    } else if (saving >= 0) {
+      // Staying on current + add-ons is cheaper than upgrading now
+      html += `<div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
+        <p style="font-size:0.875rem;font-weight:700;color:#92400e">Interim Recommendation — Now to ${expiryFmt} (${daysLeft} days)</p>
+        <p style="font-size:0.78rem;color:#78350f;margin-top:0.2rem">Keep current licenses and add <strong>${addonNames}</strong> for ${primaryLic.seats} ${curPlan.name} seats</p>
+        <div style="margin-top:0.5rem;border-top:1px solid #fcd34d;padding-top:0.4rem">
+          <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #fcd34d">
+            <thead><tr>
+              <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #fcd34d;border-right:1px solid #fcd34d"></th>
+              <th style="text-align:right;padding:0.3rem 0.5rem;color:#92400e;font-weight:700;border-bottom:2px solid #fcd34d;border-right:1px solid #fcd34d">Monthly</th>
+              <th style="text-align:right;padding:0.3rem 0.5rem;color:#92400e;font-weight:700;border-bottom:2px solid #fcd34d">Annual</th>
+            </tr></thead>
+            <tbody>
+              <tr>
+                <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">Current licenses</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">$${curTotalMonthly.toFixed(2)}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d">$${(curTotalMonthly*12).toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">+ ${addonNames}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">+$${interimExtraCost.toFixed(2)}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d">+$${(interimExtraCost*12).toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td style="padding:0.25rem 0.5rem;color:#4b5563;font-weight:600;border-right:1px solid #fcd34d">Total interim</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#92400e;border-right:1px solid #fcd34d">$${interimTotalMonthly.toFixed(2)}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#92400e">$${(interimTotalMonthly*12).toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="font-size:0.72rem;color:#059669;margin-top:0.4rem;font-weight:600">✓ Saves $${saving.toFixed(2)} vs upgrading ${users} users to ${targetPlan.name} now ($${targetMonthly.toFixed(2)}/mo)</p>
+        </div>
+        ${needs.note ? `<p style="font-size:0.72rem;color:#78350f;margin-top:0.4rem">${needs.note}</p>` : ''}
+      </div>`;
+    } else {
+      // Upgrading now is cheaper
+      html += `<div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
+        <p style="font-size:0.875rem;font-weight:700;color:#92400e">Interim Option — Now to ${expiryFmt} (${daysLeft} days)</p>
+        <p style="font-size:0.78rem;color:#78350f;margin-top:0.2rem">Add-on path: keep current licenses + <strong>${addonNames}</strong></p>
+        <div style="margin-top:0.5rem;border-top:1px solid #fcd34d;padding-top:0.4rem">
+          <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #fcd34d">
+            <thead><tr>
+              <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #fcd34d;border-right:1px solid #fcd34d"></th>
+              <th style="text-align:right;padding:0.3rem 0.5rem;color:#92400e;font-weight:700;border-bottom:2px solid #fcd34d;border-right:1px solid #fcd34d">Monthly</th>
+              <th style="text-align:right;padding:0.3rem 0.5rem;color:#92400e;font-weight:700;border-bottom:2px solid #fcd34d">Annual</th>
+            </tr></thead>
+            <tbody>
+              <tr>
+                <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">Current licenses</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">$${curTotalMonthly.toFixed(2)}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d">$${(curTotalMonthly*12).toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">+ ${addonNames}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">+$${interimExtraCost.toFixed(2)}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d">+$${(interimExtraCost*12).toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td style="padding:0.25rem 0.5rem;color:#4b5563;font-weight:600;border-right:1px solid #fcd34d">Total interim</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#92400e;border-right:1px solid #fcd34d">$${interimTotalMonthly.toFixed(2)}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#92400e">$${(interimTotalMonthly*12).toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="font-size:0.75rem;color:#b45309;margin-top:0.4rem;font-weight:600">⚠ Upgrading ${users} users to ${targetPlan.name} now ($${targetMonthly.toFixed(2)}/mo) saves $${Math.abs(saving).toFixed(2)} over this period — early upgrade recommended.</p>
+        </div>
+        ${needs.note ? `<p style="font-size:0.72rem;color:#78350f;margin-top:0.4rem">${needs.note}</p>` : ''}
+      </div>`;
+    }
+
+    html += `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
+      <p style="font-size:0.875rem;font-weight:700;color:#1d4ed8">At Renewal — ${expiryFmt}</p>
+      <p style="font-size:0.78rem;color:#1e40af;margin-top:0.2rem">Transition to <strong>${targetPlan.name}</strong> (${billingLabel}). Remove interim add-ons.</p>
+      <div style="margin-top:0.5rem;border-top:1px solid #bfdbfe;padding-top:0.4rem">
+        <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #bfdbfe">
+          <thead><tr>
+            <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #bfdbfe;border-right:1px solid #bfdbfe">Plan</th>
+            <th style="text-align:right;padding:0.3rem 0.5rem;color:#1d4ed8;font-weight:700;border-bottom:2px solid #bfdbfe;border-right:1px solid #bfdbfe">Per User</th>
+            <th style="text-align:right;padding:0.3rem 0.5rem;color:#1d4ed8;font-weight:700;border-bottom:2px solid #bfdbfe;border-right:1px solid #bfdbfe">Monthly</th>
+            <th style="text-align:right;padding:0.3rem 0.5rem;color:#1d4ed8;font-weight:700;border-bottom:2px solid #bfdbfe">Annual</th>
+          </tr></thead>
+          <tbody><tr>
+            <td style="padding:0.25rem 0.5rem;color:#4b5563;border-right:1px solid #bfdbfe">${targetPlan.name}</td>
+            <td style="text-align:right;padding:0.25rem 0.5rem;color:#1d4ed8;border-right:1px solid #bfdbfe">$${targetCostPerUser.toFixed(2)}/user</td>
+            <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1d4ed8;border-right:1px solid #bfdbfe">$${targetMonthly.toFixed(2)}/mo</td>
+            <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1d4ed8">$${(targetMonthly*12).toFixed(2)}/yr</td>
+          </tr></tbody>
+        </table>
+      </div>
+      ${users > 300 ? `<p style="font-size:0.72rem;color:#1e40af;margin-top:0.35rem">Business Premium capped at 300 users — M365 E3 recommended for ${users} users.</p>` : ''}
+    </div>`;
+  }
+
+  // Cost summary at renewal
+  html += `<div style="background:#f8fafc;border:1px solid #d1d5db;border-radius:10px;padding:0.85rem 1.1rem">
+    <p style="font-size:0.72rem;font-weight:700;color:#374151;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.07em">At-Renewal Monthly Cost · ${users} users · ${billingLabel}</p>
+    <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #d1d5db">
+      <thead><tr>
+        <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #d1d5db;border-right:1px solid #d1d5db">Plan</th>
+        <th style="text-align:right;padding:0.3rem 0.5rem;color:#374151;font-weight:700;border-bottom:2px solid #d1d5db;border-right:1px solid #d1d5db">Per User</th>
+        <th style="text-align:right;padding:0.3rem 0.5rem;color:#374151;font-weight:700;border-bottom:2px solid #d1d5db;border-right:1px solid #d1d5db">Monthly</th>
+        <th style="text-align:right;padding:0.3rem 0.5rem;color:#374151;font-weight:700;border-bottom:2px solid #d1d5db">Annual</th>
+      </tr></thead>
+      <tbody><tr>
+        <td style="padding:0.25rem 0.5rem;color:#4b5563;border-right:1px solid #d1d5db">${targetPlan.name}</td>
+        <td style="text-align:right;padding:0.25rem 0.5rem;color:#374151;border-right:1px solid #d1d5db">$${targetCostPerUser.toFixed(2)}/user</td>
+        <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a;border-right:1px solid #d1d5db">$${targetMonthly.toFixed(2)}/mo</td>
+        <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a">$${(targetMonthly*12).toFixed(2)}/yr</td>
+      </tr></tbody>
+    </table>
+  </div>`;
+
+  resultsEl.innerHTML = html;
+}
+
+function buildSecureFeatureTable() {
+  const table = document.getElementById('secure-feature-table');
+  let html = `<thead><tr>
+    <th class="feature-col" style="min-width:200px">Component</th>
+    <th class="feature-col" style="min-width:160px">Platform</th>
+    <th><span class="badge badge-watchguard">Watch + Guard</span></th>
+    <th><span class="badge badge-protect">Protect</span></th>
+    <th><span class="badge badge-shield">Shield</span></th>
+  </tr></thead><tbody>`;
+
+  SECURE_CATS.forEach(cat => {
+    html += `<tr class="cat-row"><td colspan="5">${cat.label}</td></tr>`;
+    cat.items.forEach(item => {
+      html += `<tr>
+        <td class="feature-col">${item.component}</td>
+        <td class="feature-col" style="color:#6b7280">${item.platform}</td>
+        <td class="${item.watchguard ? 'col-yes' : ''}">${item.watchguard ? '<span class="check-yes">✓</span>' : '<span class="check-no">—</span>'}</td>
+        <td class="${item.protect  ? 'col-yes' : ''}">${item.protect  ? '<span class="check-yes">✓</span>' : '<span class="check-no">—</span>'}</td>
+        <td class="${item.shield   ? 'col-yes' : ''}">${item.shield   ? '<span class="check-yes">✓</span>' : '<span class="check-no">—</span>'}</td>
+      </tr>`;
+    });
+  });
+
+  html += '</tbody>';
+  table.innerHTML = html;
+}
 
 // ── Build planner rows ─────────────────────────────────────────────────────
 function buildPlanner() {
@@ -1071,9 +1767,10 @@ function buildCompare() {
 
 // ── Tab switching ──────────────────────────────────────────────────────────
 function switchTab(name) {
-  const names = ['planner','advisor','compare','pricing'];
+  const names = ['secure','planner','advisor','compare','pricing'];
   document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', names[i] === name));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+  document.getElementById('billing-bar').style.display = name === 'secure' ? 'none' : '';
 }
 
 // ── Upgrade Advisor ────────────────────────────────────────────────────────
@@ -1299,6 +1996,35 @@ let currentBilling = 'annual-annual';
 
 function getBillingMult() { return BILLING_MULT[currentBilling]; }
 
+function getPlanPrice(planId, sector) {
+  if (sector && sector !== 'commercial') {
+    const sp = SECTOR_PRICES[sector]?.[planId];
+    if (sp !== undefined) return sp;
+  }
+  return LICENSES_MAP[planId]?.price ?? 0;
+}
+
+function toggleSector(cb) {
+  const row = cb.closest('.cur-lic-row');
+  if (cb.checked) {
+    row.querySelectorAll('.cur-lic-sector').forEach(c => { if (c !== cb) c.checked = false; });
+  }
+  refreshRowPrices(row);
+}
+
+function refreshRowPrices(row) {
+  const sectorCb = row.querySelector('.cur-lic-sector:checked');
+  const sector   = sectorCb ? sectorCb.dataset.sector : 'commercial';
+  const sel      = row.querySelector('.cur-lic-plan');
+  [...sel.options].forEach(opt => {
+    if (!opt.value) return;
+    const lic = LICENSES_MAP[opt.value];
+    if (!lic) return;
+    opt.text = `${lic.name} ($${getPlanPrice(opt.value, sector).toFixed(2)}/${lic.unit || 'user'}/mo)`;
+  });
+  runSecureAnalysis();
+}
+
 function setBilling(radio) {
   currentBilling = radio.value;
   document.querySelectorAll('.billing-opt').forEach(el => {
@@ -1331,6 +2057,7 @@ function initCardPrices() {
 buildPlanner();
 buildAdvisor();
 initCardPrices();
+initSecureTab();
 document.getElementById('adv-base').addEventListener('change', () => { refreshAddonList(); });
 document.getElementById('client-name').addEventListener('input', updateSummary);
 </script>
