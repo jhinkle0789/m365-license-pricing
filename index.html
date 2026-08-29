@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Microsoft 365 License Pricing</title>
+  <title>M365 License Pricing · General Informatics</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -16,9 +16,21 @@
 
     .container { max-width: 1200px; margin: 0 auto; }
 
-    header { margin-bottom: 2rem; }
-    header h1 { font-size: 1.75rem; font-weight: 700; color: #0f172a; }
-    header p  { margin-top: 0.4rem; font-size: 0.9rem; color: #6b7280; }
+    header {
+      margin-bottom: 1.75rem;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .header-logo { height: 38px; flex-shrink: 0; }
+    .header-divider { width: 1px; background: #e5e7eb; align-self: stretch; flex-shrink: 0; }
+    .header-text h1 { font-size: 1.25rem; font-weight: 700; color: #1B87C9; }
+    .header-text p  { margin-top: 0.25rem; font-size: 0.82rem; color: #6b7280; }
 
     .section-title {
       font-size: 0.72rem; font-weight: 700;
@@ -34,7 +46,7 @@
       border-bottom: 2px solid transparent; margin-bottom: -2px;
       transition: color 0.15s, border-color 0.15s;
     }
-    .tab-btn.active { color: #2563eb; border-bottom-color: #2563eb; }
+    .tab-btn.active { color: #1B87C9; border-bottom-color: #1B87C9; }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
@@ -45,7 +57,7 @@
       white-space: nowrap;
     }
     .badge-frontline  { background: #d1fae5; color: #065f46; }
-    .badge-business   { background: #dbeafe; color: #1d4ed8; }
+    .badge-business   { background: #cce4f4; color: #1572A8; }
     .badge-enterprise { background: #ede9fe; color: #6d28d9; }
     .badge-addon      { background: #fef3c7; color: #92400e; }
     .badge-o365       { background: #fee2e2; color: #991b1b; }
@@ -65,7 +77,7 @@
       font-size: 0.9rem; font-family: inherit; outline: none;
       transition: border-color 0.15s;
     }
-    .field-group input:focus { border-color: #2563eb; }
+    .field-group input:focus { border-color: #1B87C9; }
 
     .planner-cat-title {
       font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
@@ -79,8 +91,8 @@
       padding: 0.7rem 1rem; display: flex; align-items: center; gap: 0.75rem;
       flex-wrap: wrap; transition: border-color 0.15s;
     }
-    .license-row.checked { border-color: #93c5fd; background: #f0f7ff; }
-    .license-row input[type="checkbox"] { width: 1rem; height: 1rem; accent-color: #2563eb; cursor: pointer; flex-shrink: 0; }
+    .license-row.checked { border-color: #7dc3e8; background: #f0f7ff; }
+    .license-row input[type="checkbox"] { width: 1rem; height: 1rem; accent-color: #1B87C9; cursor: pointer; flex-shrink: 0; }
     .lr-name { flex: 1 1 200px; font-weight: 600; font-size: 0.85rem; color: #111827; }
     .lr-price { font-size: 0.82rem; color: #6b7280; white-space: nowrap; }
     .lr-seats-wrap { display: flex; align-items: center; gap: 0.4rem; }
@@ -89,7 +101,7 @@
       width: 65px; padding: 0.3rem 0.45rem; border: 1px solid #d1d5db;
       border-radius: 6px; font-size: 0.82rem; text-align: center; font-family: inherit;
     }
-    .lr-subtotal { font-size: 0.82rem; font-weight: 700; color: #1d4ed8; min-width: 90px; text-align: right; }
+    .lr-subtotal { font-size: 0.82rem; font-weight: 700; color: #1572A8; min-width: 90px; text-align: right; }
 
     .summary-bar {
       margin-top: 1.25rem; background: #1e293b; color: #f8fafc;
@@ -107,8 +119,8 @@
       font-size: 0.875rem; font-weight: 600; cursor: pointer;
       transition: background 0.15s, opacity 0.15s;
     }
-    .btn-primary { background: #2563eb; color: #fff; }
-    .btn-primary:hover { background: #1d4ed8; }
+    .btn-primary { background: #1B87C9; color: #fff; }
+    .btn-primary:hover { background: #1572A8; }
     .btn-primary:disabled { opacity: 0.4; cursor: default; }
 
     /* ── Comparison Table ── */
@@ -182,8 +194,8 @@
       transition: border-color 0.15s, background 0.15s;
       user-select: none;
     }
-    .billing-opt input[type="radio"] { accent-color: #2563eb; }
-    .billing-opt.selected { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; font-weight: 700; }
+    .billing-opt input[type="radio"] { accent-color: #1B87C9; }
+    .billing-opt.selected { border-color: #1B87C9; background: #e8f4fb; color: #1572A8; font-weight: 700; }
     .billing-badge {
       font-size: 0.67rem; font-weight: 700; padding: 0.1rem 0.35rem; border-radius: 3px;
     }
@@ -206,7 +218,7 @@
       padding: 0.45rem 0.7rem; border: 1px solid #d1d5db; border-radius: 8px;
       font-size: 0.875rem; font-family: inherit; outline: none; background: #fff;
     }
-    .adv-field select:focus, .adv-field input:focus { border-color: #2563eb; }
+    .adv-field select:focus, .adv-field input:focus { border-color: #1B87C9; }
 
     .addon-checks { display: flex; flex-direction: column; gap: 0.35rem; max-height: 320px; overflow-y: auto; }
     .addon-check-item {
@@ -214,7 +226,7 @@
       padding: 0.35rem 0.5rem; border-radius: 6px; cursor: pointer;
     }
     .addon-check-item:hover { background: #f9fafb; }
-    .addon-check-item input { accent-color: #2563eb; width: 0.9rem; height: 0.9rem; flex-shrink: 0; }
+    .addon-check-item input { accent-color: #1B87C9; width: 0.9rem; height: 0.9rem; flex-shrink: 0; }
     .addon-check-item .aci-name { font-size: 0.82rem; color: #374151; flex: 1; }
     .addon-check-item .aci-price { font-size: 0.78rem; color: #6b7280; white-space: nowrap; }
     .addon-check-item.included { opacity: 0.45; pointer-events: none; }
@@ -248,8 +260,12 @@
 <div class="container">
 
   <header>
-    <h1>Microsoft 365 License Pricing</h1>
-    <p>Per-user, per-month pricing (annual subscription) · Prices updated July 2026 from Microsoft official sources.</p>
+    <img class="header-logo" src="data:image/png;base64,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" alt="General Informatics">
+    <div class="header-divider"></div>
+    <div class="header-text">
+      <h1>Microsoft 365 License Pricing</h1>
+      <p>Per-user / per-month &middot; Prices updated July 2026 from Microsoft official sources.</p>
+    </div>
   </header>
 
   <!-- Billing type selector -->
@@ -1127,7 +1143,7 @@ function buildCurLicRowHTML() {
         <label style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.72rem;color:#059669;cursor:pointer;white-space:nowrap;user-select:none">
           <input type="checkbox" class="cur-lic-sector" data-sector="nonprofit" onchange="toggleSector(this)"> Non-profit
         </label>
-        <label style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.72rem;color:#2563eb;cursor:pointer;white-space:nowrap;user-select:none">
+        <label style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.72rem;color:#1B87C9;cursor:pointer;white-space:nowrap;user-select:none">
           <input type="checkbox" class="cur-lic-sector" data-sector="education" onchange="toggleSector(this)"> Education
         </label>
         <label style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.72rem;color:#7c3aed;cursor:pointer;white-space:nowrap;user-select:none">
@@ -1369,35 +1385,35 @@ function runSecureAnalysis() {
       <p style="font-size:0.875rem;font-weight:700;color:#92400e">⚠ Azure Conditional Access — Action Required</p>
       <p style="font-size:0.8rem;color:#78350f;margin-top:0.2rem">Conditional Access requires at minimum Entra ID P1, which is missing from ${entraNeededRows.map(l => LICENSES_MAP[l.planId].name).join(' and ')}.</p>
       <div style="margin-top:0.75rem;display:flex;flex-direction:column;gap:0.5rem">
-        ${canUpgrade ? `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:0.6rem 0.85rem">
-          <p style="font-size:0.8rem;font-weight:700;color:#1d4ed8">⭐ Recommended — Upgrade to Business Premium (in-place)</p>
-          <p style="font-size:0.78rem;color:#1e40af;margin-top:0.2rem">Microsoft allows in-place upgrades within the current license term — no renewal required.</p>
-          <div style="margin-top:0.4rem;border-top:1px solid #bfdbfe;padding-top:0.35rem">
-            <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #bfdbfe">
+        ${canUpgrade ? `<div style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:8px;padding:0.6rem 0.85rem">
+          <p style="font-size:0.8rem;font-weight:700;color:#1572A8">⭐ Recommended — Upgrade to Business Premium (in-place)</p>
+          <p style="font-size:0.78rem;color:#126490;margin-top:0.2rem">Microsoft allows in-place upgrades within the current license term — no renewal required.</p>
+          <div style="margin-top:0.4rem;border-top:1px solid #a8d5ed;padding-top:0.35rem">
+            <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #a8d5ed">
               <thead><tr>
-                <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #bfdbfe;border-right:1px solid #bfdbfe"></th>
-                <th style="text-align:right;padding:0.3rem 0.5rem;color:#16a34a;font-weight:700;border-bottom:2px solid #bfdbfe${hasWasteInCA ? ';border-right:1px solid #bfdbfe' : ''}">Licensed Users (${licensedUpgrade})</th>
-                ${hasWasteInCA ? `<th style='text-align:right;padding:0.3rem 0.5rem;color:#dc2626;font-weight:700;border-bottom:2px solid #bfdbfe'>Total License Count (${totalUpgradeSeats})</th>` : ''}
+                <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed"></th>
+                <th style="text-align:right;padding:0.3rem 0.5rem;color:#16a34a;font-weight:700;border-bottom:2px solid #a8d5ed${hasWasteInCA ? ';border-right:1px solid #a8d5ed' : ''}">Licensed Users (${licensedUpgrade})</th>
+                ${hasWasteInCA ? `<th style='text-align:right;padding:0.3rem 0.5rem;color:#dc2626;font-weight:700;border-bottom:2px solid #a8d5ed'>Total License Count (${totalUpgradeSeats})</th>` : ''}
               </tr></thead>
               <tbody>
                 <tr>
-                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #dbeafe;border-right:1px solid #bfdbfe">Monthly</td>
-                  <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#16a34a;border-bottom:1px solid #dbeafe${hasWasteInCA ? ';border-right:1px solid #bfdbfe' : ''}">$${rsPrmTotalMo.toFixed(2)}</td>
-                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#dc2626;border-bottom:1px solid #dbeafe'>$${totPrmTotalMo.toFixed(2)}</td>` : ''}
+                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">Monthly</td>
+                  <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#16a34a;border-bottom:1px solid #cce4f4${hasWasteInCA ? ';border-right:1px solid #a8d5ed' : ''}">$${rsPrmTotalMo.toFixed(2)}</td>
+                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#dc2626;border-bottom:1px solid #cce4f4'>$${totPrmTotalMo.toFixed(2)}</td>` : ''}
                 </tr>
                 <tr>
-                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #dbeafe;border-right:1px solid #bfdbfe">Annual</td>
-                  <td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #dbeafe${hasWasteInCA ? ';border-right:1px solid #bfdbfe' : ''}">$${(rsPrmTotalMo*12).toFixed(2)}</td>
-                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;border-bottom:1px solid #dbeafe'>$${(totPrmTotalMo*12).toFixed(2)}</td>` : ''}
+                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">Annual</td>
+                  <td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #cce4f4${hasWasteInCA ? ';border-right:1px solid #a8d5ed' : ''}">$${(rsPrmTotalMo*12).toFixed(2)}</td>
+                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;border-bottom:1px solid #cce4f4'>$${(totPrmTotalMo*12).toFixed(2)}</td>` : ''}
                 </tr>
                 <tr>
-                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #dbeafe;border-right:1px solid #bfdbfe">Extra/mo vs. current</td>
-                  <td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #dbeafe${hasWasteInCA ? ';border-right:1px solid #bfdbfe' : ''}">+$${rsUpgradeMo.toFixed(2)}</td>
-                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;border-bottom:1px solid #dbeafe'>+$${totalUpgradeMo.toFixed(2)}</td>` : ''}
+                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">Extra/mo vs. current</td>
+                  <td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #cce4f4${hasWasteInCA ? ';border-right:1px solid #a8d5ed' : ''}">+$${rsUpgradeMo.toFixed(2)}</td>
+                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;border-bottom:1px solid #cce4f4'>+$${totalUpgradeMo.toFixed(2)}</td>` : ''}
                 </tr>
                 ${hasWasteInCA ? `<tr>
-                  <td style='padding:0.25rem 0.5rem;color:#dc2626;font-size:0.72rem;border-right:1px solid #bfdbfe'>Wasted licenses</td>
-                  <td style='text-align:right;padding:0.25rem 0.5rem;color:#9ca3af;font-size:0.72rem;border-right:1px solid #bfdbfe'>—</td>
+                  <td style='padding:0.25rem 0.5rem;color:#dc2626;font-size:0.72rem;border-right:1px solid #a8d5ed'>Wasted licenses</td>
+                  <td style='text-align:right;padding:0.25rem 0.5rem;color:#9ca3af;font-size:0.72rem;border-right:1px solid #a8d5ed'>—</td>
                   <td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;font-size:0.72rem'>${wastedUpgrade} seats · +$${wasteUpgradeMo.toFixed(2)}/mo</td>
                 </tr>` : ''}
               </tbody>
@@ -1467,31 +1483,31 @@ function runSecureAnalysis() {
       <p style="font-size:0.8rem;color:#047857;margin-top:0.25rem">${curPlan.name} includes Entra ID P1 and Intune Plan 1 — the Secure bundle can be deployed today.</p>
     </div>`;
     if (isHigherTier) {
-      html += `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem">
-        <p style="font-size:0.875rem;font-weight:700;color:#1d4ed8">At Renewal — ${expiryFmt}</p>
-        <p style="font-size:0.8rem;color:#1e40af;margin-top:0.25rem">Continue on ${curPlan.name} — this is enterprise tier. Transitioning to ${targetPlan.name} would be a downgrade.</p>
+      html += `<div style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem">
+        <p style="font-size:0.875rem;font-weight:700;color:#1572A8">At Renewal — ${expiryFmt}</p>
+        <p style="font-size:0.8rem;color:#126490;margin-top:0.25rem">Continue on ${curPlan.name} — this is enterprise tier. Transitioning to ${targetPlan.name} would be a downgrade.</p>
       </div>`;
     } else {
-      html += `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
-        <p style="font-size:0.875rem;font-weight:700;color:#1d4ed8">At Renewal — ${expiryFmt}</p>
-        <p style="font-size:0.78rem;color:#1e40af;margin-top:0.2rem">${primaryLic.planId === targetId ? 'Renew' : 'Transition to'} <strong>${targetPlan.name}</strong> (${billingLabel}).</p>
-        <div style="margin-top:0.5rem;border-top:1px solid #bfdbfe;padding-top:0.4rem">
-          <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #bfdbfe">
+      html += `<div style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
+        <p style="font-size:0.875rem;font-weight:700;color:#1572A8">At Renewal — ${expiryFmt}</p>
+        <p style="font-size:0.78rem;color:#126490;margin-top:0.2rem">${primaryLic.planId === targetId ? 'Renew' : 'Transition to'} <strong>${targetPlan.name}</strong> (${billingLabel}).</p>
+        <div style="margin-top:0.5rem;border-top:1px solid #a8d5ed;padding-top:0.4rem">
+          <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #a8d5ed">
             <thead><tr>
-              <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #bfdbfe;border-right:1px solid #bfdbfe">Plan</th>
-              <th style="text-align:right;padding:0.3rem 0.5rem;color:#1d4ed8;font-weight:700;border-bottom:2px solid #bfdbfe;border-right:1px solid #bfdbfe">Per User</th>
-              <th style="text-align:right;padding:0.3rem 0.5rem;color:#1d4ed8;font-weight:700;border-bottom:2px solid #bfdbfe;border-right:1px solid #bfdbfe">Monthly</th>
-              <th style="text-align:right;padding:0.3rem 0.5rem;color:#1d4ed8;font-weight:700;border-bottom:2px solid #bfdbfe">Annual</th>
+              <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Plan</th>
+              <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Per User</th>
+              <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Monthly</th>
+              <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #a8d5ed">Annual</th>
             </tr></thead>
             <tbody><tr>
-              <td style="padding:0.25rem 0.5rem;color:#4b5563;border-right:1px solid #bfdbfe">${targetPlan.name}</td>
-              <td style="text-align:right;padding:0.25rem 0.5rem;color:#1d4ed8;border-right:1px solid #bfdbfe">$${targetCostPerUser.toFixed(2)}/user</td>
-              <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1d4ed8;border-right:1px solid #bfdbfe">$${targetMonthly.toFixed(2)}/mo</td>
-              <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1d4ed8">$${(targetMonthly*12).toFixed(2)}/yr</td>
+              <td style="padding:0.25rem 0.5rem;color:#4b5563;border-right:1px solid #a8d5ed">${targetPlan.name}</td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-right:1px solid #a8d5ed">$${targetCostPerUser.toFixed(2)}/user</td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1572A8;border-right:1px solid #a8d5ed">$${targetMonthly.toFixed(2)}/mo</td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1572A8">$${(targetMonthly*12).toFixed(2)}/yr</td>
             </tr></tbody>
           </table>
         </div>
-        ${users > 300 ? `<p style="font-size:0.72rem;color:#1e40af;margin-top:0.35rem">Business Premium capped at 300 — M365 E3 recommended for ${users} users.</p>` : ''}
+        ${users > 300 ? `<p style="font-size:0.72rem;color:#126490;margin-top:0.35rem">Business Premium capped at 300 — M365 E3 recommended for ${users} users.</p>` : ''}
       </div>`;
     }
   } else {
@@ -1573,26 +1589,26 @@ function runSecureAnalysis() {
       </div>`;
     }
 
-    html += `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
-      <p style="font-size:0.875rem;font-weight:700;color:#1d4ed8">At Renewal — ${expiryFmt}</p>
-      <p style="font-size:0.78rem;color:#1e40af;margin-top:0.2rem">Transition to <strong>${targetPlan.name}</strong> (${billingLabel}). Remove interim add-ons.</p>
-      <div style="margin-top:0.5rem;border-top:1px solid #bfdbfe;padding-top:0.4rem">
-        <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #bfdbfe">
+    html += `<div style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
+      <p style="font-size:0.875rem;font-weight:700;color:#1572A8">At Renewal — ${expiryFmt}</p>
+      <p style="font-size:0.78rem;color:#126490;margin-top:0.2rem">Transition to <strong>${targetPlan.name}</strong> (${billingLabel}). Remove interim add-ons.</p>
+      <div style="margin-top:0.5rem;border-top:1px solid #a8d5ed;padding-top:0.4rem">
+        <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #a8d5ed">
           <thead><tr>
-            <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #bfdbfe;border-right:1px solid #bfdbfe">Plan</th>
-            <th style="text-align:right;padding:0.3rem 0.5rem;color:#1d4ed8;font-weight:700;border-bottom:2px solid #bfdbfe;border-right:1px solid #bfdbfe">Per User</th>
-            <th style="text-align:right;padding:0.3rem 0.5rem;color:#1d4ed8;font-weight:700;border-bottom:2px solid #bfdbfe;border-right:1px solid #bfdbfe">Monthly</th>
-            <th style="text-align:right;padding:0.3rem 0.5rem;color:#1d4ed8;font-weight:700;border-bottom:2px solid #bfdbfe">Annual</th>
+            <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Plan</th>
+            <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Per User</th>
+            <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Monthly</th>
+            <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #a8d5ed">Annual</th>
           </tr></thead>
           <tbody><tr>
-            <td style="padding:0.25rem 0.5rem;color:#4b5563;border-right:1px solid #bfdbfe">${targetPlan.name}</td>
-            <td style="text-align:right;padding:0.25rem 0.5rem;color:#1d4ed8;border-right:1px solid #bfdbfe">$${targetCostPerUser.toFixed(2)}/user</td>
-            <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1d4ed8;border-right:1px solid #bfdbfe">$${targetMonthly.toFixed(2)}/mo</td>
-            <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1d4ed8">$${(targetMonthly*12).toFixed(2)}/yr</td>
+            <td style="padding:0.25rem 0.5rem;color:#4b5563;border-right:1px solid #a8d5ed">${targetPlan.name}</td>
+            <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-right:1px solid #a8d5ed">$${targetCostPerUser.toFixed(2)}/user</td>
+            <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1572A8;border-right:1px solid #a8d5ed">$${targetMonthly.toFixed(2)}/mo</td>
+            <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1572A8">$${(targetMonthly*12).toFixed(2)}/yr</td>
           </tr></tbody>
         </table>
       </div>
-      ${users > 300 ? `<p style="font-size:0.72rem;color:#1e40af;margin-top:0.35rem">Business Premium capped at 300 users — M365 E3 recommended for ${users} users.</p>` : ''}
+      ${users > 300 ? `<p style="font-size:0.72rem;color:#126490;margin-top:0.35rem">Business Premium capped at 300 users — M365 E3 recommended for ${users} users.</p>` : ''}
     </div>`;
   }
 
@@ -1757,7 +1773,7 @@ function buildCompare() {
   html += `<tr style="background:#f8fafc;font-weight:700"><td class="feature-col">Monthly Cost — ${billingLabel}</td>`;
   selected.forEach(l => {
     const seats = parseInt(document.getElementById('seats-' + l.id).value) || 0;
-    html += `<td style="color:#2563eb">$${(l.price * cmpMult * seats).toFixed(2)}</td>`;
+    html += `<td style="color:#1B87C9">$${(l.price * cmpMult * seats).toFixed(2)}</td>`;
   });
   html += '</tr></tbody></table></div>';
 
@@ -1979,7 +1995,7 @@ function runAdvisor() {
       const cheapestFull = results.find(r => r.missing.length === 0);
       if (cheapestFull) {
         const clic = LICENSES_MAP[cheapestFull.pid];
-        html += `<p style="margin-top:1rem;font-size:0.82rem;color:#2563eb;font-weight:600;">
+        html += `<p style="margin-top:1rem;font-size:0.82rem;color:#1B87C9;font-weight:600;">
           Note: <strong>${clic.name}</strong> is the most affordable plan that covers all selected add-ons
           at $${cheapestFull.altCostPer.toFixed(2)}/user/mo.
         </p>`;
