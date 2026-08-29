@@ -254,6 +254,45 @@
     .covers-all  { background: #d1fae5; color: #065f46; }
     .covers-part { background: #fef3c7; color: #92400e; }
     .adv-empty { color: #9ca3af; font-size: 0.875rem; padding: 1rem 0; }
+
+    /* ── Print / PDF ──────────────────────────────────────── */
+    .no-print {}
+    .print-only { display: none; }
+
+    @media print {
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      @page { margin: 1.2cm 1.5cm; }
+
+      body { background: #fff; }
+      .container { max-width: 100%; padding: 0; }
+
+      /* hide all chrome */
+      .billing-bar, .tabs, footer, .no-print { display: none !important; }
+
+      /* hide the left input panel; results go full-width */
+      .advisor-layout { display: block !important; }
+      .advisor-layout > .advisor-panel { display: none !important; }
+      #sec-results { max-width: 100%; }
+
+      /* tidy header */
+      header {
+        margin-bottom: 0.75rem;
+        box-shadow: none;
+        border-bottom: 2px solid #1B87C9;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+        padding: 0.5rem 0;
+      }
+
+      /* show print-only elements */
+      .print-only { display: block !important; }
+
+      /* keep table colors */
+      table { page-break-inside: auto; }
+      tr    { page-break-inside: avoid; }
+    }
   </style>
 </head>
 <body>
@@ -1242,7 +1281,17 @@ function runSecureAnalysis() {
 
   const isCompatible = addonIds.length === 0 && !needs.missingExchange;
   const expiryFmt    = expiry.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-  let html = client
+  const reportDate   = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  let html = `<div class="no-print" style="display:flex;justify-content:flex-end;margin-bottom:0.75rem">
+    <button onclick="window.print()" style="display:inline-flex;align-items:center;gap:0.4rem;background:#1B87C9;color:#fff;border:none;border-radius:6px;padding:0.45rem 0.9rem;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background 0.15s" onmouseover="this.style.background='#1572A8'" onmouseout="this.style.background='#1B87C9'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Download PDF
+    </button>
+  </div>
+  <div class="print-only" style="font-size:0.7rem;color:#6b7280;text-align:right;padding-bottom:0.5rem;border-bottom:1px solid #e5e7eb;margin-bottom:0.75rem">
+    Generated ${reportDate} · General Informatics · M365 License Analysis
+  </div>`;
+  html += client
     ? `<h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin-bottom:1rem">${client} — Transition Plan</h3>`
     : `<h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin-bottom:1rem">Transition Plan</h3>`;
 
