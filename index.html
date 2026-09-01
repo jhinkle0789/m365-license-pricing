@@ -650,7 +650,10 @@
         </div>
 
         <div class="adv-field">
-          <label>Add-ons to include</label>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem">
+            <label style="margin:0">Add-ons to include</label>
+            <button onclick="clearAddonSelections()" style="font-size:0.72rem;padding:0.2rem 0.6rem;border:1px solid #d1d5db;border-radius:5px;background:#f9fafb;color:#6b7280;cursor:pointer;font-family:inherit" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#f9fafb'">Clear All</button>
+          </div>
           <div class="addon-checks" id="adv-addons"></div>
         </div>
       </div>
@@ -702,6 +705,7 @@
           <li>Intune + Entra ID P1</li>
         </ul>
         <p class="card-note">Up to 300 users.</p>
+        <p style="font-size:0.72rem;color:#b45309;font-weight:600;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:0.4rem 0.6rem;margin-top:0.5rem;">⚠ Microsoft Defender and Conditional Access are not included with this license.</p>
       </div>
     </div>
 
@@ -3301,6 +3305,11 @@ function buildAdvisor() {
   // Default to Business Standard
   sel.value = 'std';
   refreshAddonList();
+}
+
+function clearAddonSelections() {
+  document.querySelectorAll('#adv-addons input[type="checkbox"]:not(:disabled)').forEach(cb => { cb.checked = false; });
+  runAdvisor();
 }
 
 function refreshAddonList() {
