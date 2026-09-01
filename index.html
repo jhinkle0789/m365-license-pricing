@@ -350,39 +350,54 @@
     [data-theme="dark"] #sec-client::placeholder { color: #475569 !important; }
 
     /* ---- Results panel dark mode ---- */
-    /* Client name / section headings */
+    /* Client name heading at top of report */
     [data-theme="dark"] #sec-results h3 { color: #f1f5f9 !important; }
 
-    /* Top-level section boxes: swap white → dark panel */
+    /* Outer section boxes: dark background */
     [data-theme="dark"] #sec-results > div {
       background: #1e293b !important;
       border-color: #334155 !important;
     }
-    /* Stats bar already dark — push it one shade darker so it stands out */
+    /* Stats bar: push darker to stand out */
     [data-theme="dark"] #sec-results > div:first-child {
       background: #0c1629 !important;
     }
+    /* Outer box direct <p> labels (section titles, descriptions) */
+    [data-theme="dark"] #sec-results > div > p { color: #94a3b8 !important; }
 
-    /* Tables */
-    [data-theme="dark"] #sec-results table {
+    /* Tables that are DIRECT children of outer boxes
+       (CURRENT LICENSES, Cost Breakdown — on a dark #1e293b bg) */
+    [data-theme="dark"] #sec-results > div > table {
       background: #1e293b !important;
       border-color: #334155 !important;
     }
-    [data-theme="dark"] #sec-results th {
+    [data-theme="dark"] #sec-results > div > table th {
       background: #263548 !important;
       color: #cbd5e1 !important;
       border-color: #334155 !important;
     }
-    /* td: override neutral dark text to readable light;
-       spans inside with their own inline color retain those colors (not inherited) */
-    [data-theme="dark"] #sec-results td {
+    [data-theme="dark"] #sec-results > div > table td {
       color: #e2e8f0 !important;
       border-color: #334155 !important;
     }
 
-    /* Paragraphs and labels inside result boxes */
-    [data-theme="dark"] #sec-results p  { color: #cbd5e1 !important; }
-    [data-theme="dark"] #sec-results strong { color: #e2e8f0 !important; }
+    /* Inner sub-panels (CA recommendation box, Alternative box, overlap boxes,
+       consolidation sub-boxes) retain their light inline backgrounds.
+       Use dark blue headings + dark grey body so they read on those light bgs. */
+    [data-theme="dark"] #sec-results > div > div > p,
+    [data-theme="dark"] #sec-results > div > div > div > p {
+      color: #374151 !important;
+    }
+    [data-theme="dark"] #sec-results > div > div > p:first-child,
+    [data-theme="dark"] #sec-results > div > div > div > p:first-child {
+      color: #1e3a5f !important;
+    }
+    [data-theme="dark"] #sec-results > div > div table td { color: #374151 !important; }
+    [data-theme="dark"] #sec-results > div > div table th {
+      color: #1e3a5f !important;
+      background: rgba(0,0,0,0.06) !important;
+    }
+    [data-theme="dark"] #sec-results > div > div strong { color: #1e3a5f !important; }
 
     /* Waste box — vivid red-orange across the whole panel.
        Uses #sec-results in selector to beat the broader #sec-results > div rule. */
