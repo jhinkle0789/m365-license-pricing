@@ -2348,8 +2348,8 @@ function runSecureAnalysis() {
   const primaryLic   = mainRows.length > 0 ? mainRows[0] : null;
   const curPlan      = primaryLic ? LICENSES_MAP[primaryLic.planId] : null;
   const needs        = primaryLic ? PLAN_SECURE_NEEDS[primaryLic.planId] : null;
-  const newMult      = primaryLic ? BILLING_MULT[primaryLic.billing] : 1;
-  const billingLabel = primaryLic ? ({ 'annual-annual':'Annual/Annual', 'annual-monthly':'Annual/Monthly (+5%)', 'monthly-monthly':'Monthly (+20%)' }[primaryLic.billing]) : '';
+  const newMult      = BILLING_MULT['annual-monthly'];
+  const billingLabel = 'Annual/Monthly (+5%)';
   const expiryStr    = primaryLic ? primaryLic.expiryStr : '';
   const expiry       = expiryStr ? new Date(expiryStr + 'T00:00:00') : null;
   const today        = new Date(); today.setHours(0,0,0,0);
@@ -2847,23 +2847,23 @@ function runSecureAnalysis() {
     } else {
       const remRowsHtml1 = conRemRows.map(function(r) {
         const lic = LICENSES_MAP[r.planId]; if (!lic) return '';
-        const mo  = getPlanPrice(r.planId, r.sector) * BILLING_MULT[r.billing] * r.seats;
+        const mo  = getPlanPrice(r.planId, r.sector) * BILLING_MULT['annual-monthly'] * r.seats;
         const unit = lic.unit || 'user';
         return `<tr>
               <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">${lic.name} <span style="color:#9ca3af;font-size:0.7rem">(${r.seats} ${unit}${r.seats!==1?'s':''})</span></td>
-              <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">$${(getPlanPrice(r.planId,r.sector)*BILLING_MULT[r.billing]).toFixed(2)}/${unit}</td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">$${(getPlanPrice(r.planId,r.sector)*BILLING_MULT['annual-monthly']).toFixed(2)}/${unit}</td>
               <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">$${mo.toFixed(2)}/mo</td>
               <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4">$${(mo*12).toFixed(2)}/yr</td>
             </tr>`;
       }).join('');
-      const remTotalMo1 = conRemRows.reduce(function(s,r){ return s + getPlanPrice(r.planId,r.sector)*BILLING_MULT[r.billing]*r.seats; }, 0);
+      const remTotalMo1 = conRemRows.reduce(function(s,r){ return s + getPlanPrice(r.planId,r.sector)*BILLING_MULT['annual-monthly']*r.seats; }, 0);
       const grandTotalMo1 = renewalMo + remTotalMo1;
       const totalRowHtml1 = conRemRows.length > 0
         ? `<tr><td style="padding:0.25rem 0.5rem;color:#0f172a;font-weight:700;border-top:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Total</td><td style="border-top:2px solid #a8d5ed;border-right:1px solid #a8d5ed"></td><td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a;border-top:2px solid #a8d5ed;border-right:1px solid #a8d5ed">$${grandTotalMo1.toFixed(2)}/mo</td><td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a;border-top:2px solid #a8d5ed">$${(grandTotalMo1*12).toFixed(2)}/yr</td></tr>`
         : '';
       html += `<div class="results-renewal" style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
         <p style="font-size:0.875rem;font-weight:700;color:#1572A8">At Renewal — ${expiryFmt}</p>
-        <p style="font-size:0.78rem;color:#126490;margin-top:0.2rem">${primaryLic.planId === renewalId ? 'Renew' : 'Transition to'} <strong>${renewalPlan.name}</strong> (${billingLabel}).</p>
+        <p style="font-size:0.78rem;color:#126490;margin-top:0.2rem">Transition to Consolidated Plan with Standard Billing Annual/Monthly.</p>
         <div style="margin-top:0.5rem;border-top:1px solid #a8d5ed;padding-top:0.4rem">
           <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #a8d5ed">
             <thead><tr>
@@ -2974,23 +2974,23 @@ function runSecureAnalysis() {
 
     const remRowsHtml2 = conRemRows.map(function(r) {
       const lic = LICENSES_MAP[r.planId]; if (!lic) return '';
-      const mo  = getPlanPrice(r.planId, r.sector) * BILLING_MULT[r.billing] * r.seats;
+      const mo  = getPlanPrice(r.planId, r.sector) * BILLING_MULT['annual-monthly'] * r.seats;
       const unit = lic.unit || 'user';
       return `<tr>
             <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">${lic.name} <span style="color:#9ca3af;font-size:0.7rem">(${r.seats} ${unit}${r.seats!==1?'s':''})</span></td>
-            <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">$${(getPlanPrice(r.planId,r.sector)*BILLING_MULT[r.billing]).toFixed(2)}/${unit}</td>
+            <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">$${(getPlanPrice(r.planId,r.sector)*BILLING_MULT['annual-monthly']).toFixed(2)}/${unit}</td>
             <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">$${mo.toFixed(2)}/mo</td>
             <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4">$${(mo*12).toFixed(2)}/yr</td>
           </tr>`;
     }).join('');
-    const remTotalMo2 = conRemRows.reduce(function(s,r){ return s + getPlanPrice(r.planId,r.sector)*BILLING_MULT[r.billing]*r.seats; }, 0);
+    const remTotalMo2 = conRemRows.reduce(function(s,r){ return s + getPlanPrice(r.planId,r.sector)*BILLING_MULT['annual-monthly']*r.seats; }, 0);
     const grandTotalMo2 = renewalMo + remTotalMo2;
     const totalRowHtml2 = conRemRows.length > 0
       ? `<tr><td style="padding:0.25rem 0.5rem;color:#0f172a;font-weight:700;border-top:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Total</td><td style="border-top:2px solid #a8d5ed;border-right:1px solid #a8d5ed"></td><td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a;border-top:2px solid #a8d5ed;border-right:1px solid #a8d5ed">$${grandTotalMo2.toFixed(2)}/mo</td><td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a;border-top:2px solid #a8d5ed">$${(grandTotalMo2*12).toFixed(2)}/yr</td></tr>`
       : '';
     html += `<div class="results-renewal" style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
       <p style="font-size:0.875rem;font-weight:700;color:#1572A8">At Renewal — ${expiryFmt}</p>
-      <p style="font-size:0.78rem;color:#126490;margin-top:0.2rem">Transition to <strong>${renewalPlan.name}</strong> (${billingLabel}). Remove interim add-ons.</p>
+      <p style="font-size:0.78rem;color:#126490;margin-top:0.2rem">Transition to Consolidated Plan with Standard Billing Annual/Monthly.</p>
       <div style="margin-top:0.5rem;border-top:1px solid #a8d5ed;padding-top:0.4rem">
         <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #a8d5ed">
           <thead><tr>
