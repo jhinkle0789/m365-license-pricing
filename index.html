@@ -255,6 +255,91 @@
     .covers-part { background: #fef3c7; color: #92400e; }
     .adv-empty { color: #9ca3af; font-size: 0.875rem; padding: 1rem 0; }
 
+    /* ── Dark mode toggle button ── */
+    #dark-toggle {
+      margin-left: auto; flex-shrink: 0;
+      background: none; border: 1px solid #e5e7eb; border-radius: 8px;
+      padding: 0.4rem 0.7rem; cursor: pointer; font-size: 1.1rem; line-height: 1;
+      color: #6b7280; transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    #dark-toggle:hover { background: #f3f4f6; border-color: #d1d5db; }
+
+    /* ── Dark mode overrides ── */
+    [data-theme="dark"] body { background: #0f172a; color: #e2e8f0; }
+
+    [data-theme="dark"] header { background: #1e293b; border-color: #334155; }
+    [data-theme="dark"] .header-divider { background: #334155; }
+    [data-theme="dark"] .header-text p { color: #94a3b8; }
+    [data-theme="dark"] #dark-toggle { background: #1e293b; border-color: #334155; color: #94a3b8; }
+    [data-theme="dark"] #dark-toggle:hover { background: #263548; }
+
+    [data-theme="dark"] .tabs { border-color: #334155; }
+    [data-theme="dark"] .tab-btn { color: #94a3b8; }
+    [data-theme="dark"] .tab-btn:hover { color: #cbd5e1; }
+    [data-theme="dark"] .tab-btn.active { color: #38bdf8; border-bottom-color: #38bdf8; }
+
+    [data-theme="dark"] .billing-bar { background: #1e293b; border-color: #334155; }
+    [data-theme="dark"] .billing-bar span { color: #cbd5e1; }
+    [data-theme="dark"] .billing-opt { background: #0f172a; border-color: #334155; color: #94a3b8; }
+    [data-theme="dark"] .billing-opt.selected { background: #1e3a5f; border-color: #38bdf8; color: #38bdf8; }
+
+    [data-theme="dark"] .advisor-panel { background: #1e293b; border-color: #334155; }
+    [data-theme="dark"] .advisor-panel h3 { color: #e2e8f0; }
+    [data-theme="dark"] .adv-field label { color: #cbd5e1; }
+    [data-theme="dark"] .adv-field select,
+    [data-theme="dark"] .adv-field input[type="number"],
+    [data-theme="dark"] .adv-field input[type="text"] {
+      background: #0f172a; border-color: #334155; color: #e2e8f0;
+    }
+    [data-theme="dark"] .adv-empty { color: #64748b; }
+
+    [data-theme="dark"] .cur-lic-row { background: #263548 !important; border-color: #334155 !important; }
+    [data-theme="dark"] .cur-lic-row select,
+    [data-theme="dark"] .cur-lic-row input[type="number"],
+    [data-theme="dark"] .cur-lic-row input[type="date"] {
+      background: #1e293b !important; border-color: #475569 !important; color: #e2e8f0 !important;
+    }
+    [data-theme="dark"] .cur-lic-row input[type="radio"] { accent-color: #38bdf8; }
+    [data-theme="dark"] .cur-lic-row input[type="checkbox"] { accent-color: #38bdf8; }
+
+    [data-theme="dark"] .license-row { background: #1e293b; border-color: #334155; }
+    [data-theme="dark"] .license-row.checked { background: #1e3a5f; border-color: #38bdf8; }
+    [data-theme="dark"] .lr-name { color: #e2e8f0; }
+    [data-theme="dark"] .lr-price { color: #94a3b8; }
+    [data-theme="dark"] .lr-seats { background: #0f172a; border-color: #334155; color: #e2e8f0; }
+    [data-theme="dark"] .planner-cat-title { color: #64748b; }
+
+    [data-theme="dark"] .field-group label { color: #cbd5e1; }
+    [data-theme="dark"] .field-group input { background: #1e293b; border-color: #334155; color: #e2e8f0; }
+
+    [data-theme="dark"] .card { background: #1e293b; border-color: #334155; }
+    [data-theme="dark"] .card-name { color: #e2e8f0; }
+    [data-theme="dark"] .price-amount { color: #e2e8f0; }
+    [data-theme="dark"] .card-divider { border-color: #334155; }
+    [data-theme="dark"] .card-features li { color: #cbd5e1; }
+    [data-theme="dark"] .card-note { color: #64748b; }
+    [data-theme="dark"] .section-title { color: #94a3b8; }
+
+    [data-theme="dark"] table.compare { background: #1e293b; border-color: #334155; }
+    [data-theme="dark"] table.compare th { background: #263548; color: #cbd5e1; }
+    [data-theme="dark"] table.compare td { border-color: #263548; }
+    [data-theme="dark"] table.compare td.feature-col { color: #cbd5e1; }
+    [data-theme="dark"] table.compare .cat-row td { background: #0f172a; color: #64748b; }
+    [data-theme="dark"] table.compare tbody tr:hover td { background: #263548; }
+    [data-theme="dark"] #compare-section h2 { color: #e2e8f0; }
+
+    [data-theme="dark"] .adv-alt-table { background: #1e293b; border-color: #334155; }
+    [data-theme="dark"] .adv-alt-table th { background: #263548; color: #cbd5e1; }
+    [data-theme="dark"] .adv-alt-table td { border-color: #263548; color: #cbd5e1; }
+    [data-theme="dark"] .adv-alt-table tr:hover td { background: #263548; }
+
+    [data-theme="dark"] .addon-check-item .aci-name { color: #cbd5e1; }
+    [data-theme="dark"] .addon-check-item .aci-price { color: #94a3b8; }
+    [data-theme="dark"] .addon-check-item:hover { background: #263548; }
+
+    [data-theme="dark"] footer { color: #475569; }
+    [data-theme="dark"] footer a { color: #475569; }
+
     /* ── Print / PDF ──────────────────────────────────────── */
     .no-print {}
     .print-only { display: none; }
@@ -348,6 +433,7 @@
       <h1>Microsoft 365 License Analysis</h1>
       <p>Per-user / per-month &middot; Prices updated July 2026 from Microsoft official sources.</p>
     </div>
+    <button id="dark-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">🌙</button>
   </header>
 
   <!-- Billing type selector -->
@@ -3345,6 +3431,31 @@ initCardPrices();
 initSecureTab();
 document.getElementById('adv-base').addEventListener('change', () => { refreshAddonList(); });
 document.getElementById('client-name').addEventListener('input', updateSummary);
+
+// ── Dark mode ──────────────────────────────────────────────────────────────
+function toggleDarkMode() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  setDarkMode(!isDark);
+}
+
+function setDarkMode(dark) {
+  if (dark) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById('dark-toggle').textContent = '☀️';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    document.getElementById('dark-toggle').textContent = '🌙';
+  }
+  try { localStorage.setItem('gi_m365_theme', dark ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Restore saved theme on load
+(function() {
+  try {
+    const saved = localStorage.getItem('gi_m365_theme');
+    if (saved === 'dark') setDarkMode(true);
+  } catch(e) {}
+})();
 </script>
 </body>
 </html>
