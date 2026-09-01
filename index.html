@@ -340,6 +340,41 @@
     [data-theme="dark"] footer { color: #475569; }
     [data-theme="dark"] footer a { color: #475569; }
 
+    /* ---- Client name & user count inputs ---- */
+    [data-theme="dark"] #sec-client,
+    [data-theme="dark"] #sec-users {
+      background: #0f172a !important;
+      color: #e2e8f0 !important;
+      border-color: #334155 !important;
+    }
+    [data-theme="dark"] #sec-client::placeholder { color: #475569 !important; }
+
+    /* ---- Results panel: darken white section boxes ---- */
+    [data-theme="dark"] #sec-results > div {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+    }
+    /* Keep the stats bar visually distinct (already dark, push darker) */
+    [data-theme="dark"] #sec-results > div:first-child {
+      background: #0f172a !important;
+    }
+    /* Tables inside results */
+    [data-theme="dark"] #sec-results table {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+    }
+    [data-theme="dark"] #sec-results th {
+      background: #263548 !important;
+      color: #cbd5e1 !important;
+      border-color: #334155 !important;
+    }
+    [data-theme="dark"] #sec-results td {
+      border-color: #334155 !important;
+    }
+    /* Neutral gray text inside results — make readable on dark bg */
+    [data-theme="dark"] #sec-results p { color: #cbd5e1; }
+    [data-theme="dark"] #sec-results strong { color: #e2e8f0; }
+
     /* ── Print / PDF ──────────────────────────────────────── */
     .no-print {}
     .print-only { display: none; }
