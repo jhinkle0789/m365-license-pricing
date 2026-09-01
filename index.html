@@ -349,16 +349,21 @@
     }
     [data-theme="dark"] #sec-client::placeholder { color: #475569 !important; }
 
-    /* ---- Results panel: darken white section boxes ---- */
+    /* ---- Results panel dark mode ---- */
+    /* Client name / section headings */
+    [data-theme="dark"] #sec-results h3 { color: #f1f5f9 !important; }
+
+    /* Top-level section boxes: swap white → dark panel */
     [data-theme="dark"] #sec-results > div {
       background: #1e293b !important;
       border-color: #334155 !important;
     }
-    /* Keep the stats bar visually distinct (already dark, push darker) */
+    /* Stats bar already dark — push it one shade darker so it stands out */
     [data-theme="dark"] #sec-results > div:first-child {
-      background: #0f172a !important;
+      background: #0c1629 !important;
     }
-    /* Tables inside results */
+
+    /* Tables */
     [data-theme="dark"] #sec-results table {
       background: #1e293b !important;
       border-color: #334155 !important;
@@ -368,12 +373,16 @@
       color: #cbd5e1 !important;
       border-color: #334155 !important;
     }
+    /* td: override neutral dark text to readable light;
+       spans inside with their own inline color retain those colors (not inherited) */
     [data-theme="dark"] #sec-results td {
+      color: #e2e8f0 !important;
       border-color: #334155 !important;
     }
-    /* Neutral gray text inside results — make readable on dark bg */
-    [data-theme="dark"] #sec-results p { color: #cbd5e1; }
-    [data-theme="dark"] #sec-results strong { color: #e2e8f0; }
+
+    /* Paragraphs and labels inside result boxes */
+    [data-theme="dark"] #sec-results p  { color: #cbd5e1 !important; }
+    [data-theme="dark"] #sec-results strong { color: #e2e8f0 !important; }
 
     /* ── Print / PDF ──────────────────────────────────────── */
     .no-print {}
