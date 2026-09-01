@@ -3154,7 +3154,7 @@ function buildCompare() {
   selected.forEach(l => {
     const unit = l.unit || 'user';
     html += `<th>${l.name.replace('Microsoft 365 ','M365 ').replace('Office 365 ','O365 ')}<br>
-      <span style="font-weight:400;color:#6b7280;font-size:0.78rem">$${getPlanPrice(l.id, currentSector).toFixed(2)}/${unit}/mo</span></th>`;
+      <span style="font-weight:400;color:#6b7280;font-size:0.78rem">$${(getPlanPrice(l.id, currentSector) * getBillingMult()).toFixed(2)}/${unit}/mo</span></th>`;
   });
   html += '</tr></thead><tbody>';
 
@@ -3188,7 +3188,9 @@ function buildCompare() {
   html += '</tr></tbody></table></div>';
 
   section.innerHTML = html;
+  window.scrollTo(0, 0);
   switchTab('compare');
+  setTimeout(() => window.scrollTo(0, 0), 0);
 }
 
 // ── Tab switching ──────────────────────────────────────────────────────────
