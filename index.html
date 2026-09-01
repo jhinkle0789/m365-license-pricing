@@ -3222,8 +3222,38 @@ const PLAN_COVERS = {
 };
 
 const MAIN_PLAN_IDS = ['f1','f3','apps','bsc','std','prm','o365e1','o365e3','o365e5','appsent','e3','e5','e7'];
-const ADDON_IDS     = ['entrap1','entrap2','entras','int1','int2','ints','intrh','intepm','intaa','inteam','intpki',
-                       'tess','tent','tphn','tphnz1','tprm','troomspro','copbiz','copent','agent365','wine3','e5s','e5c'];
+const ADDON_IDS     = [
+  // Entra ID
+  'entrap1','entrap2','entras',
+  // Intune
+  'int1','int2','ints','intrh','intepm','intaa','inteam','intpki',
+  // Defender
+  'mdb','mdep1','mdep2','mdop1','mdop2','mdid','mdca',
+  // Exchange Online
+  'exok','exo1','exo2',
+  // SharePoint Online
+  'spo1','spo2',
+  // Teams
+  'tess','tent','tphn','tphnz1','tprm','troomspro','troomsbasic','taudconf','tshared',
+  // Power BI
+  'pbipro','pbipu',
+  // Power Platform
+  'ppapps','ppauto',
+  // Project
+  'proj1','proj3','proj5',
+  // Visio
+  'vis1','vis2',
+  // Viva
+  'vivasuite','vivainsights','vivalearning',
+  // Copilot & AI
+  'copbiz','copent','agent365',
+  // Windows
+  'wine3','wine5',
+  // M365 E5 add-ons
+  'e5s','e5c',
+  // Frontline add-ons
+  'f5s','f5c',
+];
 
 // Capability floor for each plan — used to detect downgrades
 // office_web: 'full' = full edit, 'view' = view/limited only, 'none' = not included
@@ -3385,8 +3415,11 @@ function runAdvisor() {
         ? `<br><span style="font-size:0.72rem;color:#9ca3af">Still needs: ${r.missing.map(id => LICENSES_MAP[id]?.name || id).join(', ')}</span>`
         : '';
 
+      const f3Warning = r.pid === 'f3'
+        ? `<br><span style="font-size:0.72rem;color:#b45309;font-weight:600;">⚠ Microsoft Defender and Conditional Access are not included with this license.</span>`
+        : '';
       html += `<tr>
-        <td><strong>${lic.name}</strong> <span class="badge badge-${lic.tier}" style="font-size:0.62rem">${lic.tier}</span></td>
+        <td><strong>${lic.name}</strong> <span class="badge badge-${lic.tier}" style="font-size:0.62rem">${lic.tier}</span>${f3Warning}</td>
         <td>$${r.altCostPer.toFixed(2)}</td>
         <td>$${r.altMonthly.toFixed(2)}</td>
         <td>${diffStr}</td>
@@ -3404,6 +3437,11 @@ function runAdvisor() {
         Recommendation: <strong>${blic.name}</strong> covers all selected add-ons and saves
         $${Math.abs(best.diff).toFixed(2)}/mo ($${(Math.abs(best.diff)*12).toFixed(2)}/yr) vs. your current bundle.
       </p>`;
+      if (best.pid === 'f3') {
+        html += `<p style="margin-top:0.4rem;font-size:0.8rem;color:#b45309;font-weight:600;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:0.5rem 0.75rem;">
+          ⚠ Warning: Microsoft Defender and Conditional Access are not included with M365 F3.
+        </p>`;
+      }
     } else {
       const cheapestFull = results.find(r => r.missing.length === 0);
       if (cheapestFull) {
@@ -3412,6 +3450,11 @@ function runAdvisor() {
           Note: <strong>${clic.name}</strong> is the most affordable plan that covers all selected add-ons
           at $${cheapestFull.altCostPer.toFixed(2)}/user/mo.
         </p>`;
+        if (cheapestFull.pid === 'f3') {
+          html += `<p style="margin-top:0.4rem;font-size:0.8rem;color:#b45309;font-weight:600;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:0.5rem 0.75rem;">
+            ⚠ Warning: Microsoft Defender and Conditional Access are not included with M365 F3.
+          </p>`;
+        }
       }
     }
   }
