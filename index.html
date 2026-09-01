@@ -148,6 +148,7 @@
       text-align: left;
     }
     .check-yes     { color: #10b981; font-size: 1rem; }
+    .check-yes::before { content: "\2713"; }
     .check-no      { color: #d1d5db; font-size: 1rem; }
     .check-partial { color: #f59e0b; font-size: 0.75rem; font-weight: 700; }
     .col-yes  { background: #f0fdf4 !important; }
@@ -172,7 +173,7 @@
     .card-divider { border: none; border-top: 1px solid #f3f4f6; }
     .card-features { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
     .card-features li { font-size: 0.82rem; color: #374151; padding-left: 1.1rem; position: relative; }
-    .card-features li::before { content: "✓"; position: absolute; left: 0; color: #10b981; font-weight: 700; }
+    .card-features li::before { content: "\2713"; position: absolute; left: 0; color: #10b981; font-weight: 700; }
     .card-note { font-size: 0.72rem; color: #9ca3af; margin-top: auto; }
     .card-req  { font-size: 0.72rem; color: #f59e0b; font-weight: 600; margin-top: auto; }
 
@@ -256,13 +257,25 @@
     .adv-empty { color: #9ca3af; font-size: 0.875rem; padding: 1rem 0; }
 
     /* ── Dark mode toggle button ── */
-    #dark-toggle {
+    #dark-toggle-wrap {
       margin-left: auto; flex-shrink: 0;
-      background: none; border: 1px solid #e5e7eb; border-radius: 8px;
-      padding: 0.4rem 0.7rem; cursor: pointer; font-size: 1.1rem; line-height: 1;
-      color: #6b7280; transition: background 0.15s, border-color 0.15s, color 0.15s;
+      display: flex; align-items: center; gap: 0.5rem;
     }
-    #dark-toggle:hover { background: #f3f4f6; border-color: #d1d5db; }
+    #dark-toggle-label {
+      font-size: 0.78rem; color: #6b7280; white-space: nowrap; user-select: none;
+    }
+    #dark-toggle {
+      position: relative; width: 40px; height: 22px;
+      background: #d1d5db; border: none; border-radius: 11px;
+      cursor: pointer; padding: 0; flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    #dark-toggle::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 16px; height: 16px; background: #fff; border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
 
     /* ── Dark mode overrides ── */
     [data-theme="dark"] body { background: #0f172a; color: #e2e8f0; }
@@ -270,8 +283,9 @@
     [data-theme="dark"] header { background: #1e293b; border-color: #334155; }
     [data-theme="dark"] .header-divider { background: #334155; }
     [data-theme="dark"] .header-text p { color: #94a3b8; }
-    [data-theme="dark"] #dark-toggle { background: #1e293b; border-color: #334155; color: #94a3b8; }
-    [data-theme="dark"] #dark-toggle:hover { background: #263548; }
+    [data-theme="dark"] #dark-toggle-label { color: #94a3b8; }
+    [data-theme="dark"] #dark-toggle { background: #1B87C9; }
+    [data-theme="dark"] #dark-toggle::after { transform: translateX(18px); }
 
     [data-theme="dark"] .tabs { border-color: #334155; }
     [data-theme="dark"] .tab-btn { color: #94a3b8; }
@@ -282,6 +296,9 @@
     [data-theme="dark"] .billing-bar span { color: #cbd5e1; }
     [data-theme="dark"] .billing-opt { background: #0f172a; border-color: #334155; color: #94a3b8; }
     [data-theme="dark"] .billing-opt.selected { background: #1e3a5f; border-color: #38bdf8; color: #38bdf8; }
+    [data-theme="dark"] .billing-badge-base    { color: #1e293b !important; }
+    [data-theme="dark"] .billing-badge-monthly { color: #1e293b !important; }
+    [data-theme="dark"] .billing-badge-mtm     { color: #1e293b !important; }
 
     [data-theme="dark"] .advisor-panel { background: #1e293b; border-color: #334155; }
     [data-theme="dark"] .advisor-panel h3 { color: #e2e8f0; }
@@ -405,10 +422,49 @@
     [data-theme="dark"] #sec-results .results-waste th {
       background: #6b2410 !important;
       border-color: #ea580c !important;
+      color: #f1f5f9 !important;
     }
     [data-theme="dark"] #sec-results .results-waste td {
       border-color: #c2410c !important;
+      color: #f1f5f9 !important;
     }
+    [data-theme="dark"] #sec-results .results-waste p { color: #f1f5f9 !important; }
+
+    /* At Renewal — keep dark bg, blue headers, white body, blended borders */
+    [data-theme="dark"] #sec-results .results-renewal th {
+      color: #7dc3e8 !important;
+      border-color: rgba(255,255,255,0.08) !important;
+    }
+    [data-theme="dark"] #sec-results .results-renewal td {
+      color: #f1f5f9 !important;
+      border-color: rgba(255,255,255,0.08) !important;
+    }
+    [data-theme="dark"] #sec-results .results-renewal table { border-color: rgba(255,255,255,0.08) !important; }
+
+    /* Interim Option — preserve light background in dark mode (same as Alternative panel) */
+    [data-theme="dark"] #sec-results > .results-interim {
+      background: #f8fafc !important;
+      border-color: #e5e7eb !important;
+    }
+    [data-theme="dark"] #sec-results .results-interim > p:first-child { color: #374151 !important; }
+    [data-theme="dark"] #sec-results .results-interim > p             { color: #6b7280 !important; }
+    [data-theme="dark"] #sec-results .results-interim table  { background: #f8fafc !important; border-color: #d1d5db !important; }
+    [data-theme="dark"] #sec-results .results-interim th     { border-color: #d1d5db !important; color: #374151 !important; }
+    [data-theme="dark"] #sec-results .results-interim td     { border-color: #e5e7eb !important; color: #374151 !important; }
+
+    /* License Cost Breakdown — dark bg, blue headers, white labels, keep green/red amounts */
+    [data-theme="dark"] #sec-results .results-breakdown table { border-color: rgba(255,255,255,0.08) !important; }
+    [data-theme="dark"] #sec-results .results-breakdown th {
+      color: #7dc3e8 !important;
+      border-color: rgba(255,255,255,0.08) !important;
+    }
+    [data-theme="dark"] #sec-results .results-breakdown td {
+      border-color: rgba(255,255,255,0.08) !important;
+    }
+    [data-theme="dark"] #sec-results .results-breakdown td:first-child { color: #f1f5f9 !important; }
+    [data-theme="dark"] #sec-results .results-breakdown td:first-child span { color: #94a3b8 !important; }
+    [data-theme="dark"] #sec-results .results-breakdown td.bd-waste-label { color: #f87171 !important; }
+    [data-theme="dark"] #sec-results .results-breakdown td.bd-red { color: #f87171 !important; }
 
     /* ── Print / PDF ──────────────────────────────────────── */
     .no-print {}
@@ -503,18 +559,21 @@
       <h1>Microsoft 365 License Analysis</h1>
       <p>Per-user / per-month &middot; Prices updated July 2026 from Microsoft official sources.</p>
     </div>
-    <button id="dark-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">🌙</button>
+    <div id="dark-toggle-wrap" class="no-print">
+      <span id="dark-toggle-label">Dark Mode</span>
+      <button id="dark-toggle" role="switch" aria-checked="false" onclick="toggleDarkMode()" title="Toggle dark mode"></button>
+    </div>
   </header>
 
   <!-- Billing type selector -->
   <div class="billing-bar" id="billing-bar" style="display:none">
     <span>NCE Billing Type:</span>
-    <label class="billing-opt selected" id="blbl-annual-annual">
-      <input type="radio" name="billing" value="annual-annual" checked onchange="setBilling(this)">
+    <label class="billing-opt" id="blbl-annual-annual">
+      <input type="radio" name="billing" value="annual-annual" onchange="setBilling(this)">
       Annual / Billed Annually <span class="billing-badge billing-badge-base">Lowest price</span>
     </label>
-    <label class="billing-opt" id="blbl-annual-monthly">
-      <input type="radio" name="billing" value="annual-monthly" onchange="setBilling(this)">
+    <label class="billing-opt selected" id="blbl-annual-monthly">
+      <input type="radio" name="billing" value="annual-monthly" checked onchange="setBilling(this)">
       Annual / Billed Monthly <span class="billing-badge billing-badge-monthly">+5%</span>
     </label>
     <label class="billing-opt" id="blbl-monthly-monthly">
@@ -523,10 +582,30 @@
     </label>
   </div>
 
+  <div class="billing-bar" id="sector-bar" style="display:none">
+    <span>Special Pricing:</span>
+    <label class="billing-opt selected" id="slbl-commercial">
+      <input type="radio" name="sector" value="commercial" checked onchange="setSector(this)">
+      Commercial
+    </label>
+    <label class="billing-opt" id="slbl-nonprofit">
+      <input type="radio" name="sector" value="nonprofit" onchange="setSector(this)">
+      Non-Profit
+    </label>
+    <label class="billing-opt" id="slbl-education">
+      <input type="radio" name="sector" value="education" onchange="setSector(this)">
+      Education
+    </label>
+    <label class="billing-opt" id="slbl-government">
+      <input type="radio" name="sector" value="government" onchange="setSector(this)">
+      Gov (GCC)
+    </label>
+  </div>
+
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('secure')">Current Licenses</button>
-    <button class="tab-btn" onclick="switchTab('planner')">Client Planner</button>
     <button class="tab-btn" onclick="switchTab('advisor')">Upgrade Advisor</button>
+    <button class="tab-btn" onclick="switchTab('planner')">Client Planner</button>
     <button class="tab-btn" onclick="switchTab('compare')">Feature Comparison</button>
     <button class="tab-btn" onclick="switchTab('pricing')">All Plans</button>
   </div>
@@ -2302,8 +2381,8 @@ function runSecureAnalysis() {
     Generated ${reportDate} · General Informatics · M365 License Analysis
   </div>`;
   html += client
-    ? `<h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin-bottom:1rem">${client} — License Analysis</h3>`
-    : `<h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin-bottom:1rem">License Analysis</h3>`;
+    ? `<h3 style="font-size:1.4rem;font-weight:700;color:#0f172a;margin-bottom:1rem">${client} — License Analysis</h3>`
+    : `<h3 style="font-size:1.4rem;font-weight:700;color:#0f172a;margin-bottom:1rem">License Analysis</h3>`;
 
   // Stats bar — full version with renewal dates when available, otherwise just $/mo
   if (expiryFmt && daysLeft !== null) {
@@ -2321,6 +2400,7 @@ function runSecureAnalysis() {
   // Per-license breakdown
   const wastedLics = [];
   let totalWasteMo = 0;
+  html += '<!--WHY_PLACEHOLDER-->';
   html += `<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:0.75rem 1rem;margin-bottom:1rem">
     <p style="font-size:0.72rem;font-weight:700;color:#374151;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.07em">Current Licenses</p>
     <table style="width:100%;font-size:0.8rem;border-collapse:collapse">
@@ -2362,7 +2442,7 @@ function runSecureAnalysis() {
     const hasAnnualWaste   = wastedLics.some(l => l.billing !== 'monthly-monthly');
     const hasMonthlyWaste  = wastedLics.some(l => l.billing === 'monthly-monthly');
     html += `<div class="results-waste" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
-      <p style="font-size:0.875rem;font-weight:700;color:#991b1b">💸 Unassigned License Waste</p>
+      <p style="font-size:0.875rem;font-weight:700;color:#991b1b">Unassigned License Waste</p>
       <div style="display:flex;gap:1.5rem;margin-top:0.5rem">
         <div><p style="font-size:0.72rem;color:#9ca3af;margin-bottom:0.1rem">Monthly waste</p><p style="font-size:1rem;font-weight:800;color:#dc2626">$${totalWasteMo.toFixed(2)}</p></div>
         <div><p style="font-size:0.72rem;color:#9ca3af;margin-bottom:0.1rem">Annual waste</p><p style="font-size:1rem;font-weight:800;color:#dc2626">$${(totalWasteMo*12).toFixed(2)}</p></div>
@@ -2394,8 +2474,8 @@ function runSecureAnalysis() {
             </tr>`;
           }).join('')}</tbody>
         </table>
-        ${hasAnnualWaste ? `<p style="font-size:0.72rem;color:#b45309;margin-top:0.4rem">⚠ NCE annual subscriptions lock seat counts for the commitment term — seats cannot be removed until renewal.</p>` : ''}
-        ${!hasAnnualWaste ? `<p style="font-size:0.72rem;color:#059669;margin-top:0.4rem">✓ All waste is on monthly subscriptions and can be corrected at the next billing cycle.</p>` : ''}
+        ${hasAnnualWaste ? `<p style="font-size:0.72rem;color:#b45309;margin-top:0.4rem">Note: NCE annual subscriptions lock seat counts for the commitment term — seats cannot be removed until renewal.</p>` : ''}
+        ${!hasAnnualWaste ? `<p style="font-size:0.72rem;color:#059669;margin-top:0.4rem">All waste is on monthly subscriptions and can be corrected at the next billing cycle.</p>` : ''}
       </div>
     </div>`;
   }
@@ -2418,41 +2498,41 @@ function runSecureAnalysis() {
     const bdWasteSeats  = bdSeats - bdAssigned;
     const bdWasteMo     = bdTotalMo - bdAssignedMo;
 
-    const bdThStyle     = bdWaste ? ';border-right:1px solid #d1d5db' : '';
-    const bdTotalThH    = bdWaste ? '<th style="text-align:right;padding:0.3rem 0.5rem;color:#dc2626;font-weight:700;border-bottom:2px solid #d1d5db">Total Seats (' + bdSeats + ')</th>' : '';
-    const bdWasteRow    = bdWaste ? '<tr><td style="padding:0.25rem 0.5rem;color:#dc2626;font-size:0.72rem;border-right:1px solid #d1d5db">Wasted licenses</td><td style="text-align:right;padding:0.25rem 0.5rem;color:#9ca3af;font-size:0.72rem;border-right:1px solid #d1d5db">—</td><td style="text-align:right;padding:0.25rem 0.5rem;color:#dc2626;font-size:0.72rem">' + bdWasteSeats + ' seats · +$' + bdWasteMo.toFixed(2) + '/mo</td></tr>' : '';
+    const bdThStyle     = bdWaste ? ';border-right:1px solid #a8d5ed' : '';
+    const bdTotalThH    = bdWaste ? '<th style="text-align:right;padding:0.3rem 0.5rem;color:#dc2626;font-weight:700;border-bottom:2px solid #a8d5ed">Total Seats (' + bdSeats + ')</th>' : '';
+    const bdWasteRow    = bdWaste ? '<tr><td class="bd-waste-label" style="padding:0.25rem 0.5rem;color:#dc2626;font-size:0.72rem;border-right:1px solid #a8d5ed">Wasted licenses</td><td style="text-align:right;padding:0.25rem 0.5rem;color:#9ca3af;font-size:0.72rem;border-right:1px solid #a8d5ed">—</td><td class="bd-red" style="text-align:right;padding:0.25rem 0.5rem;color:#dc2626;font-size:0.72rem">' + bdWasteSeats + ' seats · +$' + bdWasteMo.toFixed(2) + '/mo</td></tr>' : '';
 
     const bdLicRows = bdRows.map(function(r) {
       const wasteCls  = r.assignedMo < r.totalMo ? '#dc2626' : '#16a34a';
-      const totalCell = bdWaste ? '<td style="text-align:right;padding:0.25rem 0.5rem;color:' + wasteCls + ';border-bottom:1px solid #e5e7eb">$' + r.totalMo.toFixed(2) + '/mo</td>' : '';
+      const totalCell = bdWaste ? '<td class="' + (wasteCls === '#dc2626' ? 'bd-red' : '') + '" style="text-align:right;padding:0.25rem 0.5rem;color:' + wasteCls + ';border-bottom:1px solid #cce4f4">$' + r.totalMo.toFixed(2) + '/mo</td>' : '';
       return '<tr>'
-        + '<td style="padding:0.25rem 0.5rem;color:#374151;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">' + r.name + ' <span style="color:#9ca3af">(' + r.total + ' ' + r.unit + (r.total !== 1 ? 's' : '') + ')</span></td>'
-        + '<td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #e5e7eb' + bdThStyle + '">$' + r.assignedMo.toFixed(2) + '/mo</td>'
+        + '<td style="padding:0.25rem 0.5rem;color:#374151;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">' + r.name + ' <span style="color:#9ca3af">(' + r.total + ' ' + r.unit + (r.total !== 1 ? 's' : '') + ')</span></td>'
+        + '<td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #cce4f4' + bdThStyle + '">$' + r.assignedMo.toFixed(2) + '/mo</td>'
         + totalCell
         + '</tr>';
     }).join('');
 
-    html += '<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">'
-      + '<p style="font-size:0.875rem;font-weight:700;color:#0f172a">&#128203; License Cost Breakdown</p>'
-      + '<p style="font-size:0.78rem;color:#6b7280;margin-top:0.2rem">Monthly and annual cost across all entered licenses.</p>'
-      + '<div style="margin-top:0.5rem;border-top:1px solid #e5e7eb;padding-top:0.4rem">'
-      + '<table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #d1d5db">'
+    html += '<div class="results-breakdown" style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">'
+      + '<p style="font-size:0.875rem;font-weight:700;color:#1572A8">License Cost Breakdown</p>'
+      + '<p style="font-size:0.78rem;color:#126490;margin-top:0.2rem">Monthly and annual cost across all entered licenses.</p>'
+      + '<div style="margin-top:0.5rem;border-top:1px solid #a8d5ed;padding-top:0.4rem">'
+      + '<table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #a8d5ed">'
       + '<thead><tr>'
-      + '<th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #d1d5db;border-right:1px solid #d1d5db">License</th>'
-      + '<th style="text-align:right;padding:0.3rem 0.5rem;color:#16a34a;font-weight:700;border-bottom:2px solid #d1d5db' + bdThStyle + '">Assigned (' + bdAssigned + ')</th>'
+      + '<th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">License</th>'
+      + '<th style="text-align:right;padding:0.3rem 0.5rem;color:#16a34a;font-weight:700;border-bottom:2px solid #a8d5ed' + bdThStyle + '">Assigned (' + bdAssigned + ')</th>'
       + bdTotalThH
       + '</tr></thead>'
       + '<tbody>'
       + bdLicRows
       + '<tr>'
-      + '<td style="padding:0.25rem 0.5rem;color:#0f172a;font-weight:700;border-bottom:1px solid #d1d5db;border-right:1px solid #d1d5db">Total Monthly</td>'
-      + '<td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#16a34a;border-bottom:1px solid #d1d5db' + bdThStyle + '">$' + bdAssignedMo.toFixed(2) + '</td>'
-      + (bdWaste ? '<td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#dc2626;border-bottom:1px solid #d1d5db">$' + bdTotalMo.toFixed(2) + '</td>' : '')
+      + '<td style="padding:0.25rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:1px solid #a8d5ed;border-right:1px solid #a8d5ed">Total Monthly</td>'
+      + '<td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#16a34a;border-bottom:1px solid #a8d5ed' + bdThStyle + '">$' + bdAssignedMo.toFixed(2) + '</td>'
+      + (bdWaste ? '<td class="bd-red" style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#dc2626;border-bottom:1px solid #a8d5ed">$' + bdTotalMo.toFixed(2) + '</td>' : '')
       + '</tr>'
       + '<tr>'
-      + '<td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">Annual</td>'
-      + '<td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #e5e7eb' + bdThStyle + '">$' + (bdAssignedMo * 12).toFixed(2) + '</td>'
-      + (bdWaste ? '<td style="text-align:right;padding:0.25rem 0.5rem;color:#dc2626;border-bottom:1px solid #e5e7eb">$' + (bdTotalMo * 12).toFixed(2) + '</td>' : '')
+      + '<td style="padding:0.25rem 0.5rem;color:#4b5563;font-weight:700;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">Annual</td>'
+      + '<td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#16a34a;border-bottom:1px solid #cce4f4' + bdThStyle + '">$' + (bdAssignedMo * 12).toFixed(2) + '</td>'
+      + (bdWaste ? '<td class="bd-red" style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#dc2626;border-bottom:1px solid #cce4f4">$' + (bdTotalMo * 12).toFixed(2) + '</td>' : '')
       + '</tr>'
       + bdWasteRow
       + '</tbody></table></div></div>';
@@ -2476,139 +2556,9 @@ function runSecureAnalysis() {
     return;
   }
 
-  // ── Conditional Access section ─────────────────────────────────────────────
-  const needsEntraP1    = needs.addons.includes('entrap1');
-  const hasEntraP1Addon = curLicsList.some(l => l.planId === 'entrap1');
-  const primBillingMult  = BILLING_MULT[primaryLic.billing];
-  const entraP1PricePrim = getPlanPrice('entrap1', primaryLic.sector);
-  const entraAddonMo     = entraP1PricePrim * primBillingMult * primaryLic.seats;
-
-  if (!needsEntraP1 || hasEntraP1Addon) {
-    html += `<div style="background:#d1fae5;border:1px solid #6ee7b7;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
-      <p style="font-size:0.875rem;font-weight:700;color:#065f46">✓ Azure Conditional Access Ready</p>
-      <p style="font-size:0.8rem;color:#047857;margin-top:0.2rem">${!needsEntraP1 ? curPlan.name + ' includes Entra ID P1' : 'Entra ID P1 is already on this account'} — Azure Conditional Access is available.</p>
-    </div>`;
-  } else {
-    // All main suite plans that need Entra P1 (not just primary)
-    const entraNeededRows = mainRows.filter(l => PLAN_SECURE_NEEDS[l.planId]?.addons.includes('entrap1'));
-    const upgradeableRows = entraNeededRows.filter(l => ['bsc','std'].includes(l.planId));
-    const canUpgrade      = upgradeableRows.length > 0;
-
-    // Sum Entra P1 addon cost across all plans that need it (per-row sector pricing)
-    const totalEntraAddonMo = entraNeededRows.reduce((s, l) =>
-      s + getPlanPrice('entrap1', l.sector) * BILLING_MULT[l.billing] * l.seats, 0);
-
-    // Sum upgrade cost across all bsc/std plans (per-row sector pricing)
-    const totalUpgradeMo = upgradeableRows.reduce((s, l) =>
-      s + (getPlanPrice('prm', l.sector) - getPlanPrice(l.planId, l.sector)) * BILLING_MULT[l.billing] * l.seats, 0);
-
-    // Seat counts: licensed (assigned) vs total (including unused)
-    const rsSeat            = l => l.assigned !== null ? Math.max(0, Math.min(l.assigned, l.seats)) : l.seats;
-    const rsEntraAddonMo    = entraNeededRows.reduce((s, l) => s + getPlanPrice('entrap1', l.sector) * BILLING_MULT[l.billing] * rsSeat(l), 0);
-    const rsUpgradeMo       = upgradeableRows.reduce((s, l) => s + (getPlanPrice('prm', l.sector) - getPlanPrice(l.planId, l.sector)) * BILLING_MULT[l.billing] * rsSeat(l), 0);
-    const rsPrmTotalMo      = upgradeableRows.reduce((s, l) => s + getPlanPrice('prm', l.sector) * BILLING_MULT[l.billing] * rsSeat(l), 0);
-    const totPrmTotalMo     = upgradeableRows.reduce((s, l) => s + getPlanPrice('prm', l.sector) * BILLING_MULT[l.billing] * l.seats, 0);
-    const licensedUpgrade   = upgradeableRows.reduce((s, l) => s + rsSeat(l), 0);
-    const totalUpgradeSeats = upgradeableRows.reduce((s, l) => s + l.seats, 0);
-    const licensedEntra     = entraNeededRows.reduce((s, l) => s + rsSeat(l), 0);
-    const totalEntraSeats   = entraNeededRows.reduce((s, l) => s + l.seats, 0);
-    const wastedUpgrade     = totalUpgradeSeats - licensedUpgrade;
-    const wastedEntra       = totalEntraSeats - licensedEntra;
-    const wasteUpgradeMo    = totalUpgradeMo - rsUpgradeMo;
-    const wasteEntraMo      = totalEntraAddonMo - rsEntraAddonMo;
-    const hasWasteInCA      = entraNeededRows.some(l => l.assigned !== null && l.assigned < l.seats);
-    // Current license cost for entra-affected rows (to show combined total with add-on)
-    const rsCurEntraMo      = entraNeededRows.reduce((s, l) => s + getPlanPrice(l.planId, l.sector) * BILLING_MULT[l.billing] * rsSeat(l), 0);
-    const totCurEntraMo     = entraNeededRows.reduce((s, l) => s + getPlanPrice(l.planId, l.sector) * BILLING_MULT[l.billing] * l.seats, 0);
-    const rsTotalWithEntra  = rsCurEntraMo + rsEntraAddonMo;
-    const totTotalWithEntra = totCurEntraMo + totalEntraAddonMo;
-
-    html += `<div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
-      <p style="font-size:0.875rem;font-weight:700;color:#92400e">⚠ Azure Conditional Access — Action Required</p>
-      <p style="font-size:0.8rem;color:#78350f;margin-top:0.2rem">Conditional Access requires at minimum Entra ID P1, which is missing from ${entraNeededRows.map(l => LICENSES_MAP[l.planId].name).join(' and ')}.</p>
-      <div style="margin-top:0.75rem;display:flex;flex-direction:column;gap:0.5rem">
-        ${canUpgrade ? `<div class="inner-light-panel" style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:8px;padding:0.6rem 0.85rem">
-          <p style="font-size:0.8rem;font-weight:700;color:#1572A8">⭐ Recommended — Upgrade to Business Premium (in-place)</p>
-          <p style="font-size:0.78rem;color:#126490;margin-top:0.2rem">Microsoft allows in-place upgrades within the current license term — no renewal required.</p>
-          <div style="margin-top:0.4rem;border-top:1px solid #a8d5ed;padding-top:0.35rem">
-            <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #a8d5ed">
-              <thead><tr>
-                <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed"></th>
-                <th style="text-align:right;padding:0.3rem 0.5rem;color:#16a34a;font-weight:700;border-bottom:2px solid #a8d5ed${hasWasteInCA ? ';border-right:1px solid #a8d5ed' : ''}">Licensed Users (${licensedUpgrade})</th>
-                ${hasWasteInCA ? `<th style='text-align:right;padding:0.3rem 0.5rem;color:#dc2626;font-weight:700;border-bottom:2px solid #a8d5ed'>Total License Count (${totalUpgradeSeats})</th>` : ''}
-              </tr></thead>
-              <tbody>
-                <tr>
-                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">Monthly</td>
-                  <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#16a34a;border-bottom:1px solid #cce4f4${hasWasteInCA ? ';border-right:1px solid #a8d5ed' : ''}">$${rsPrmTotalMo.toFixed(2)}</td>
-                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#dc2626;border-bottom:1px solid #cce4f4'>$${totPrmTotalMo.toFixed(2)}</td>` : ''}
-                </tr>
-                <tr>
-                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">Annual</td>
-                  <td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #cce4f4${hasWasteInCA ? ';border-right:1px solid #a8d5ed' : ''}">$${(rsPrmTotalMo*12).toFixed(2)}</td>
-                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;border-bottom:1px solid #cce4f4'>$${(totPrmTotalMo*12).toFixed(2)}</td>` : ''}
-                </tr>
-                <tr>
-                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">Extra/mo vs. current</td>
-                  <td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #cce4f4${hasWasteInCA ? ';border-right:1px solid #a8d5ed' : ''}">+$${rsUpgradeMo.toFixed(2)}</td>
-                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;border-bottom:1px solid #cce4f4'>+$${totalUpgradeMo.toFixed(2)}</td>` : ''}
-                </tr>
-                ${hasWasteInCA ? `<tr>
-                  <td style='padding:0.25rem 0.5rem;color:#dc2626;font-size:0.72rem;border-right:1px solid #a8d5ed'>Wasted licenses</td>
-                  <td style='text-align:right;padding:0.25rem 0.5rem;color:#9ca3af;font-size:0.72rem;border-right:1px solid #a8d5ed'>—</td>
-                  <td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;font-size:0.72rem'>${wastedUpgrade} seats · +$${wasteUpgradeMo.toFixed(2)}/mo</td>
-                </tr>` : ''}
-              </tbody>
-            </table>
-          </div>
-          <p style="font-size:0.72rem;color:#3730a3;margin-top:0.25rem">Business Premium also includes Intune Plan 1 and advanced threat protection.</p>
-        </div>` : ''}
-        <div class="inner-light-panel" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:0.6rem 0.85rem">
-          <p style="font-size:0.8rem;font-weight:700;color:#374151">${canUpgrade ? 'Alternative' : 'Option'} — Add Entra ID P1</p>
-          <p style="font-size:0.78rem;color:#6b7280;margin-top:0.2rem">Add Entra ID P1 to enable Conditional Access without changing the base plan.</p>
-          <div style="margin-top:0.4rem;border-top:1px solid #e5e7eb;padding-top:0.35rem">
-            <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #d1d5db">
-              <thead><tr>
-                <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #d1d5db;border-right:1px solid #d1d5db"></th>
-                <th style="text-align:right;padding:0.3rem 0.5rem;color:#16a34a;font-weight:700;border-bottom:2px solid #d1d5db${hasWasteInCA ? ';border-right:1px solid #d1d5db' : ''}">Licensed Users (${licensedEntra})</th>
-                ${hasWasteInCA ? `<th style='text-align:right;padding:0.3rem 0.5rem;color:#dc2626;font-weight:700;border-bottom:2px solid #d1d5db'>Total License Count (${totalEntraSeats})</th>` : ''}
-              </tr></thead>
-              <tbody>
-                <tr>
-                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">Current licenses</td>
-                  <td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #e5e7eb${hasWasteInCA ? ';border-right:1px solid #d1d5db' : ''}">$${rsCurEntraMo.toFixed(2)}/mo</td>
-                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;border-bottom:1px solid #e5e7eb'>$${totCurEntraMo.toFixed(2)}/mo</td>` : ''}
-                </tr>
-                <tr>
-                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">+ Entra ID P1</td>
-                  <td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #e5e7eb${hasWasteInCA ? ';border-right:1px solid #d1d5db' : ''}">+$${rsEntraAddonMo.toFixed(2)}/mo</td>
-                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;border-bottom:1px solid #e5e7eb'>+$${totalEntraAddonMo.toFixed(2)}/mo</td>` : ''}
-                </tr>
-                <tr>
-                  <td style="padding:0.25rem 0.5rem;color:#4b5563;font-weight:600;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">Total monthly</td>
-                  <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#16a34a;border-bottom:1px solid #e5e7eb${hasWasteInCA ? ';border-right:1px solid #d1d5db' : ''}">$${rsTotalWithEntra.toFixed(2)}</td>
-                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#dc2626;border-bottom:1px solid #e5e7eb'>$${totTotalWithEntra.toFixed(2)}</td>` : ''}
-                </tr>
-                <tr>
-                  <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">Annual</td>
-                  <td style="text-align:right;padding:0.25rem 0.5rem;color:#16a34a;border-bottom:1px solid #e5e7eb${hasWasteInCA ? ';border-right:1px solid #d1d5db' : ''}">$${(rsTotalWithEntra*12).toFixed(2)}</td>
-                  ${hasWasteInCA ? `<td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;border-bottom:1px solid #e5e7eb'>$${(totTotalWithEntra*12).toFixed(2)}</td>` : ''}
-                </tr>
-                ${hasWasteInCA ? `<tr>
-                  <td style='padding:0.25rem 0.5rem;color:#dc2626;font-size:0.72rem;border-right:1px solid #d1d5db'>Wasted licenses</td>
-                  <td style='text-align:right;padding:0.25rem 0.5rem;color:#9ca3af;font-size:0.72rem;border-right:1px solid #d1d5db'>—</td>
-                  <td style='text-align:right;padding:0.25rem 0.5rem;color:#dc2626;font-size:0.72rem'>${wastedEntra} seats · +$${wasteEntraMo.toFixed(2)}/mo</td>
-                </tr>` : ''}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>`;
-  }
-
   let conRecId      = null; // set inside consolidation block, used in At Renewal section
   let conReasoning  = [];  // explanation bullets, set inside consolidation block
+  let conRemRows    = [];  // add-on licenses remaining after consolidation (not covered by recommended plan)
 
   // ── License Consolidation Recommendation ──────────────────────────────────
   {
@@ -2728,6 +2678,7 @@ function runSecureAnalysis() {
 
       const remRows    = curLicsList.filter(function(l){ return !CON_IDS.has(l.planId) && !incSet.has(l.planId); });
       const remMo      = remRows.reduce(function(s,l){ return s + getPlanPrice(l.planId,l.sector)*BILLING_MULT[l.billing]*l.seats; }, 0);
+      conRemRows = remRows;
 
       const newTotMo   = recMo + remMo;
       const afterLicCount = 1 + remRows.length;
@@ -2790,7 +2741,7 @@ function runSecureAnalysis() {
             + '</tr>';
         }).join('');
         overlapHtml += '<div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:0.6rem 0.85rem;margin-bottom:0.5rem">'
-          + '<p style="font-size:0.8rem;font-weight:700;color:#92400e">&#9888; Redundant Add-ons &#8212; Can Be Removed Now</p>'
+          + '<p style="font-size:0.8rem;font-weight:700;color:#92400e">Redundant Add-ons &#8212; Can Be Removed Now</p>'
           + '<p style="font-size:0.78rem;color:#78350f;margin-top:0.15rem">These add-ons are already included in your current suite plans. Remove them to save $' + nowRedMo.toFixed(2) + '/mo ($' + (nowRedMo * 12).toFixed(2) + '/yr) immediately.</p>'
           + '<table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #fcd34d;margin-top:0.4rem">'
           + '<thead><tr>'
@@ -2814,7 +2765,7 @@ function runSecureAnalysis() {
             + '</tr>';
         }).join('');
         overlapHtml += '<div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:0.6rem 0.85rem;margin-bottom:0.5rem">'
-          + '<p style="font-size:0.8rem;font-weight:700;color:#92400e">&#128203; Suite Plan Overlap &#8212; Lower Tier Alongside Higher Tier</p>'
+          + '<p style="font-size:0.8rem;font-weight:700;color:#92400e">Suite Plan Overlap &#8212; Lower Tier Alongside Higher Tier</p>'
           + '<p style="font-size:0.78rem;color:#78350f;margin-top:0.15rem">These lower-tier plans coexist with a higher-tier plan. Migrating those users to the higher plan eliminates the separate tier and simplifies licensing.</p>'
           + '<table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #fcd34d;margin-top:0.4rem">'
           + '<thead><tr>'
@@ -2830,7 +2781,7 @@ function runSecureAnalysis() {
 
       const recPlanBoxHtml = conRows.length >= 2
         ? '<div style="background:#fff;border:1px solid #a8d5ed;border-radius:8px;padding:0.6rem 0.85rem">'
-          + '<p style="font-size:0.8rem;font-weight:700;color:#1572A8">&#11088; Recommended &#8212; ' + recPlan.name + ' (' + recSeats + ' users @ $' + getPlanPrice(recId, recSector).toFixed(2) + '/user/mo)</p>'
+          + '<p style="font-size:0.8rem;font-weight:700;color:#1572A8">Recommended &#8212; ' + recPlan.name + ' (' + recSeats + ' users @ $' + getPlanPrice(recId, recSector).toFixed(2) + '/user/mo)</p>'
           + '<p style="font-size:0.78rem;color:#126490;margin-top:0.2rem">' + billingLabel + ' billing</p>'
           + '<div style="margin-top:0.4rem;border-top:1px solid #a8d5ed;padding-top:0.35rem">'
           + '<table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #a8d5ed">'
@@ -2843,7 +2794,7 @@ function runSecureAnalysis() {
           + conLicRowsHtml
           + '<tr><td style="padding:0.25rem 0.5rem;color:#374151;font-weight:700;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Current total (' + curLicsList.length + ' license' + (curLicsList.length !== 1 ? 's' : '') + ')</td><td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#374151;border-bottom:2px solid #a8d5ed">$' + curTotalMonthly.toFixed(2) + '/mo</td></tr>'
           + '<tr><td colspan="2" style="' + sectionHdrStyle + 'background:#e8f4fb;color:#1572A8;border-right:none">After Consolidation</td></tr>'
-          + '<tr><td style="padding:0.2rem 0.5rem 0.2rem 1.1rem;color:#1572A8;font-weight:600;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">&#10003; ' + recPlan.name + ' (' + recSeats + ' users)</td><td style="text-align:right;padding:0.2rem 0.5rem;font-weight:700;color:#1572A8;border-bottom:1px solid #cce4f4">$' + recMo.toFixed(2) + '/mo</td></tr>'
+          + '<tr><td style="padding:0.2rem 0.5rem 0.2rem 1.1rem;color:#1572A8;font-weight:600;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">' + recPlan.name + ' (' + recSeats + ' users)</td><td style="text-align:right;padding:0.2rem 0.5rem;font-weight:700;color:#1572A8;border-bottom:1px solid #cce4f4">$' + recMo.toFixed(2) + '/mo</td></tr>'
           + redLicRowsHtml
           + remLicRowsHtml
           + '<tr><td style="padding:0.25rem 0.5rem;color:#0f172a;font-weight:700;border-bottom:1px solid #a8d5ed;border-right:1px solid #a8d5ed">New total monthly (' + afterLicCount + ' license' + (afterLicCount !== 1 ? 's' : '') + ')</td><td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a;border-bottom:1px solid #a8d5ed">$' + newTotMo.toFixed(2) + '</td></tr>'
@@ -2855,7 +2806,7 @@ function runSecureAnalysis() {
         : '';
 
       html += '<div class="con-section" style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">'
-        + '<p style="font-size:0.875rem;font-weight:700;color:#1572A8">&#128230; License Consolidation &amp; Overlap Analysis</p>'
+        + '<p style="font-size:0.875rem;font-weight:700;color:#1572A8">License Consolidation &amp; Overlap Analysis</p>'
         + '<p style="font-size:0.8rem;color:#126490;margin-top:0.2rem">Identifies redundant licenses, plan overlaps, and the most cost-effective path to Conditional Access &amp; Entra ID Join.</p>'
         + '<div style="margin-top:0.75rem;display:flex;flex-direction:column;gap:0.5rem">'
         + overlapHtml
@@ -2879,38 +2830,58 @@ function runSecureAnalysis() {
 
   if (daysLeft <= 0) {
     html += `<div style="background:#d1fae5;border:1px solid #6ee7b7;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem">
-      <p style="font-size:0.875rem;font-weight:700;color:#065f46">✓ License expired — transition to ${renewalPlan.name} now</p>
+      <p style="font-size:0.875rem;font-weight:700;color:#065f46">License expired — transition to ${renewalPlan.name} now</p>
       <p style="font-size:0.8rem;color:#047857;margin-top:0.25rem">No interim period needed. Provision <strong>${renewalPlan.name}</strong> at $${renewalCPU.toFixed(2)}/user/mo (${billingLabel}).</p>
     </div>`;
   } else if (isCompatible) {
     const isHigherTier = curPlan.price > renewalPlan.price && primaryLic.planId !== renewalId;
     html += `<div style="background:#d1fae5;border:1px solid #6ee7b7;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem">
-      <p style="font-size:0.875rem;font-weight:700;color:#065f46">✓ Current plan is Secure bundle compatible</p>
+      <p style="font-size:0.875rem;font-weight:700;color:#065f46">Current plan is Secure bundle compatible</p>
       <p style="font-size:0.8rem;color:#047857;margin-top:0.25rem">${curPlan.name} includes Entra ID P1 and Intune Plan 1 — the Secure bundle can be deployed today.</p>
     </div>`;
     if (isHigherTier) {
-      html += `<div style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem">
+      html += `<div class="results-renewal" style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem">
         <p style="font-size:0.875rem;font-weight:700;color:#1572A8">At Renewal — ${expiryFmt}</p>
         <p style="font-size:0.8rem;color:#126490;margin-top:0.25rem">Continue on ${curPlan.name} — this is enterprise tier. Transitioning to ${renewalPlan.name} would be a downgrade.</p>
       </div>`;
     } else {
-      html += `<div style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
+      const remRowsHtml1 = conRemRows.map(function(r) {
+        const lic = LICENSES_MAP[r.planId]; if (!lic) return '';
+        const mo  = getPlanPrice(r.planId, r.sector) * BILLING_MULT[r.billing] * r.seats;
+        const unit = lic.unit || 'user';
+        return `<tr>
+              <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">${lic.name} <span style="color:#9ca3af;font-size:0.7rem">(${r.seats} ${unit}${r.seats!==1?'s':''})</span></td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">$${(getPlanPrice(r.planId,r.sector)*BILLING_MULT[r.billing]).toFixed(2)}/${unit}</td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">$${mo.toFixed(2)}/mo</td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4">$${(mo*12).toFixed(2)}/yr</td>
+            </tr>`;
+      }).join('');
+      const remTotalMo1 = conRemRows.reduce(function(s,r){ return s + getPlanPrice(r.planId,r.sector)*BILLING_MULT[r.billing]*r.seats; }, 0);
+      const grandTotalMo1 = renewalMo + remTotalMo1;
+      const totalRowHtml1 = conRemRows.length > 0
+        ? `<tr><td style="padding:0.25rem 0.5rem;color:#0f172a;font-weight:700;border-top:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Total</td><td style="border-top:2px solid #a8d5ed;border-right:1px solid #a8d5ed"></td><td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a;border-top:2px solid #a8d5ed;border-right:1px solid #a8d5ed">$${grandTotalMo1.toFixed(2)}/mo</td><td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a;border-top:2px solid #a8d5ed">$${(grandTotalMo1*12).toFixed(2)}/yr</td></tr>`
+        : '';
+      html += `<div class="results-renewal" style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
         <p style="font-size:0.875rem;font-weight:700;color:#1572A8">At Renewal — ${expiryFmt}</p>
         <p style="font-size:0.78rem;color:#126490;margin-top:0.2rem">${primaryLic.planId === renewalId ? 'Renew' : 'Transition to'} <strong>${renewalPlan.name}</strong> (${billingLabel}).</p>
         <div style="margin-top:0.5rem;border-top:1px solid #a8d5ed;padding-top:0.4rem">
           <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #a8d5ed">
             <thead><tr>
               <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Plan</th>
-              <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Per User</th>
+              <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Per Unit</th>
               <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Monthly</th>
               <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #a8d5ed">Annual</th>
             </tr></thead>
-            <tbody><tr>
-              <td style="padding:0.25rem 0.5rem;color:#4b5563;border-right:1px solid #a8d5ed">${renewalPlan.name}</td>
-              <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-right:1px solid #a8d5ed">$${renewalCPU.toFixed(2)}/user</td>
-              <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1572A8;border-right:1px solid #a8d5ed">$${renewalMo.toFixed(2)}/mo</td>
-              <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1572A8">$${(renewalMo*12).toFixed(2)}/yr</td>
-            </tr></tbody>
+            <tbody>
+            <tr>
+              <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">${renewalPlan.name} <span style="color:#9ca3af;font-size:0.7rem">(${users} users)</span></td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">$${renewalCPU.toFixed(2)}/user</td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1572A8;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">$${renewalMo.toFixed(2)}/mo</td>
+              <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1572A8;border-bottom:1px solid #cce4f4">$${(renewalMo*12).toFixed(2)}/yr</td>
+            </tr>
+            ${remRowsHtml1}
+            ${totalRowHtml1}
+            </tbody>
           </table>
         </div>
         ${users > 300 ? `<p style="font-size:0.72rem;color:#126490;margin-top:0.35rem">Business Premium capped at 300 — M365 E3 recommended for ${users} users.</p>` : ''}
@@ -2923,138 +2894,141 @@ function runSecureAnalysis() {
 
     if (needs.missingExchange) {
       html += `<div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem">
-        <p style="font-size:0.875rem;font-weight:700;color:#991b1b">⚠ Interim — Now to ${expiryFmt} (${daysLeft} days)</p>
+        <p style="font-size:0.875rem;font-weight:700;color:#991b1b">Interim — Now to ${expiryFmt} (${daysLeft} days)</p>
         <p style="font-size:0.8rem;color:#b91c1c;margin-top:0.25rem"><strong>${curPlan.name} has no Exchange mailbox</strong> — CheckPoint email security cannot function. Early upgrade to <strong>${renewalPlan.name}</strong> is strongly recommended.</p>
         ${needs.note ? `<p style="font-size:0.72rem;color:#991b1b;margin-top:0.4rem">${needs.note}</p>` : ''}
       </div>`;
     } else if (saving >= 0) {
       // Staying on current + add-ons is cheaper than upgrading now
-      html += `<div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
-        <p style="font-size:0.875rem;font-weight:700;color:#92400e">Interim Recommendation — Now to ${expiryFmt} (${daysLeft} days)</p>
-        <p style="font-size:0.78rem;color:#78350f;margin-top:0.2rem">${allAddonsOwned ? 'Current licenses already include <strong>' + ownedAddonNames + '</strong> — no additional add-ons needed.' : 'Keep current licenses and add <strong>' + addonNames + '</strong> for ' + primaryLic.seats + ' ' + curPlan.name + ' seats'}</p>
-        <div style="margin-top:0.5rem;border-top:1px solid #fcd34d;padding-top:0.4rem">
-          <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #fcd34d">
+      html += `<div class="results-interim" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
+        <p style="font-size:0.875rem;font-weight:700;color:#374151">Interim Recommendation — Now to ${expiryFmt} (${daysLeft} days)</p>
+        <p style="font-size:0.78rem;color:#6b7280;margin-top:0.2rem">${allAddonsOwned ? 'Current licenses already include <strong>' + ownedAddonNames + '</strong> — no additional add-ons needed.' : 'Keep current licenses and add <strong>' + addonNames + '</strong> for ' + primaryLic.seats + ' ' + curPlan.name + ' seats'}</p>
+        <div style="margin-top:0.5rem;border-top:1px solid #e5e7eb;padding-top:0.4rem">
+          <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #d1d5db">
             <thead><tr>
-              <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #fcd34d;border-right:1px solid #fcd34d"></th>
-              <th style="text-align:right;padding:0.3rem 0.5rem;color:#92400e;font-weight:700;border-bottom:2px solid #fcd34d;border-right:1px solid #fcd34d">Monthly</th>
-              <th style="text-align:right;padding:0.3rem 0.5rem;color:#92400e;font-weight:700;border-bottom:2px solid #fcd34d">Annual</th>
+              <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #d1d5db;border-right:1px solid #d1d5db"></th>
+              <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #d1d5db;border-right:1px solid #d1d5db">Monthly</th>
+              <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #d1d5db">Annual</th>
             </tr></thead>
             <tbody>
               <tr>
-                <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">Current licenses</td>
-                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">$${curTotalMonthly.toFixed(2)}</td>
-                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d">$${(curTotalMonthly*12).toFixed(2)}</td>
+                <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">Current licenses</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#374151;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">$${curTotalMonthly.toFixed(2)}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#374151;border-bottom:1px solid #e5e7eb">$${(curTotalMonthly*12).toFixed(2)}</td>
               </tr>
               ${allAddonsOwned
-                ? `<tr><td colspan="3" style="padding:0.25rem 0.5rem;color:#059669;font-size:0.72rem;border-bottom:1px solid #fcd34d">✓ ${ownedAddonNames} already included in current licenses</td></tr>`
+                ? `<tr><td colspan="3" style="padding:0.25rem 0.5rem;color:#059669;font-size:0.72rem;border-bottom:1px solid #e5e7eb">${ownedAddonNames} already included in current licenses</td></tr>`
                 : `<tr>
-                <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">+ ${addonNames}</td>
-                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">+$${interimExtraCost.toFixed(2)}</td>
-                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d">+$${(interimExtraCost*12).toFixed(2)}</td>
+                <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">+ ${addonNames}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#374151;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">+$${interimExtraCost.toFixed(2)}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#374151;border-bottom:1px solid #e5e7eb">+$${(interimExtraCost*12).toFixed(2)}</td>
               </tr>`}
               <tr>
-                <td style="padding:0.25rem 0.5rem;color:#4b5563;font-weight:600;border-right:1px solid #fcd34d">Total interim</td>
-                <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#92400e;border-right:1px solid #fcd34d">$${interimTotalMonthly.toFixed(2)}</td>
-                <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#92400e">$${(interimTotalMonthly*12).toFixed(2)}</td>
+                <td style="padding:0.25rem 0.5rem;color:#4b5563;font-weight:600;border-right:1px solid #d1d5db">Total interim</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a;border-right:1px solid #d1d5db">$${interimTotalMonthly.toFixed(2)}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a">$${(interimTotalMonthly*12).toFixed(2)}</td>
               </tr>
             </tbody>
           </table>
-          <p style="font-size:0.72rem;color:#059669;margin-top:0.4rem;font-weight:600">✓ Saves $${saving.toFixed(2)} vs upgrading ${users} users to ${renewalPlan.name} now ($${renewalMo.toFixed(2)}/mo)</p>
+          <p style="font-size:0.72rem;color:#059669;margin-top:0.4rem;font-weight:600">Saves $${saving.toFixed(2)} vs upgrading ${users} users to ${renewalPlan.name} now ($${renewalMo.toFixed(2)}/mo)</p>
         </div>
-        ${needs.note ? `<p style="font-size:0.72rem;color:#78350f;margin-top:0.4rem">${needs.note}</p>` : ''}
+        ${needs.note ? `<p style="font-size:0.72rem;color:#6b7280;margin-top:0.4rem">${needs.note}</p>` : ''}
       </div>`;
     } else {
       // Upgrading now is cheaper
-      html += `<div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
-        <p style="font-size:0.875rem;font-weight:700;color:#92400e">Interim Option — Now to ${expiryFmt} (${daysLeft} days)</p>
-        <p style="font-size:0.78rem;color:#78350f;margin-top:0.2rem">${allAddonsOwned ? 'Current licenses already include <strong>' + ownedAddonNames + '</strong> — no additional add-ons needed.' : 'Add-on path: keep current licenses + <strong>' + addonNames + '</strong>'}</p>
-        <div style="margin-top:0.5rem;border-top:1px solid #fcd34d;padding-top:0.4rem">
-          <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #fcd34d">
+      html += `<div class="results-interim" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
+        <p style="font-size:0.875rem;font-weight:700;color:#374151">Interim Option — Now to ${expiryFmt} (${daysLeft} days)</p>
+        <p style="font-size:0.78rem;color:#6b7280;margin-top:0.2rem">${allAddonsOwned ? 'Current licenses already include <strong>' + ownedAddonNames + '</strong> — no additional add-ons needed.' : 'Add-on path: keep current licenses + <strong>' + addonNames + '</strong>'}</p>
+        <div style="margin-top:0.5rem;border-top:1px solid #e5e7eb;padding-top:0.4rem">
+          <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #d1d5db">
             <thead><tr>
-              <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #fcd34d;border-right:1px solid #fcd34d"></th>
-              <th style="text-align:right;padding:0.3rem 0.5rem;color:#92400e;font-weight:700;border-bottom:2px solid #fcd34d;border-right:1px solid #fcd34d">Monthly</th>
-              <th style="text-align:right;padding:0.3rem 0.5rem;color:#92400e;font-weight:700;border-bottom:2px solid #fcd34d">Annual</th>
+              <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #d1d5db;border-right:1px solid #d1d5db"></th>
+              <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #d1d5db;border-right:1px solid #d1d5db">Monthly</th>
+              <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #d1d5db">Annual</th>
             </tr></thead>
             <tbody>
               <tr>
-                <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">Current licenses</td>
-                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">$${curTotalMonthly.toFixed(2)}</td>
-                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d">$${(curTotalMonthly*12).toFixed(2)}</td>
+                <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">Current licenses</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#374151;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">$${curTotalMonthly.toFixed(2)}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#374151;border-bottom:1px solid #e5e7eb">$${(curTotalMonthly*12).toFixed(2)}</td>
               </tr>
               ${allAddonsOwned
-                ? `<tr><td colspan="3" style="padding:0.25rem 0.5rem;color:#059669;font-size:0.72rem;border-bottom:1px solid #fcd34d">✓ ${ownedAddonNames} already included in current licenses</td></tr>`
+                ? `<tr><td colspan="3" style="padding:0.25rem 0.5rem;color:#059669;font-size:0.72rem;border-bottom:1px solid #e5e7eb">${ownedAddonNames} already included in current licenses</td></tr>`
                 : `<tr>
-                <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">+ ${addonNames}</td>
-                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d;border-right:1px solid #fcd34d">+$${interimExtraCost.toFixed(2)}</td>
-                <td style="text-align:right;padding:0.25rem 0.5rem;color:#78350f;border-bottom:1px solid #fcd34d">+$${(interimExtraCost*12).toFixed(2)}</td>
+                <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">+ ${addonNames}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#374151;border-bottom:1px solid #e5e7eb;border-right:1px solid #d1d5db">+$${interimExtraCost.toFixed(2)}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;color:#374151;border-bottom:1px solid #e5e7eb">+$${(interimExtraCost*12).toFixed(2)}</td>
               </tr>`}
               <tr>
-                <td style="padding:0.25rem 0.5rem;color:#4b5563;font-weight:600;border-right:1px solid #fcd34d">Total interim</td>
-                <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#92400e;border-right:1px solid #fcd34d">$${interimTotalMonthly.toFixed(2)}</td>
-                <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#92400e">$${(interimTotalMonthly*12).toFixed(2)}</td>
+                <td style="padding:0.25rem 0.5rem;color:#4b5563;font-weight:600;border-right:1px solid #d1d5db">Total interim</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a;border-right:1px solid #d1d5db">$${interimTotalMonthly.toFixed(2)}</td>
+                <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a">$${(interimTotalMonthly*12).toFixed(2)}</td>
               </tr>
             </tbody>
           </table>
-          <p style="font-size:0.75rem;color:#b45309;margin-top:0.4rem;font-weight:600">⚠ Upgrading ${users} users to ${renewalPlan.name} now ($${renewalMo.toFixed(2)}/mo) saves $${Math.abs(saving).toFixed(2)} over this period — early upgrade recommended.</p>
+          <p style="font-size:0.75rem;color:#059669;margin-top:0.4rem;font-weight:700">Early Upgrade Recommended — upgrading ${users} users to ${renewalPlan.name} now ($${renewalMo.toFixed(2)}/mo) saves $${Math.abs(saving).toFixed(2)} over this period.</p>
         </div>
-        ${needs.note ? `<p style="font-size:0.72rem;color:#78350f;margin-top:0.4rem">${needs.note}</p>` : ''}
+        ${needs.note ? `<p style="font-size:0.72rem;color:#6b7280;margin-top:0.4rem">${needs.note}</p>` : ''}
       </div>`;
     }
 
-    html += `<div style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
+    const remRowsHtml2 = conRemRows.map(function(r) {
+      const lic = LICENSES_MAP[r.planId]; if (!lic) return '';
+      const mo  = getPlanPrice(r.planId, r.sector) * BILLING_MULT[r.billing] * r.seats;
+      const unit = lic.unit || 'user';
+      return `<tr>
+            <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">${lic.name} <span style="color:#9ca3af;font-size:0.7rem">(${r.seats} ${unit}${r.seats!==1?'s':''})</span></td>
+            <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">$${(getPlanPrice(r.planId,r.sector)*BILLING_MULT[r.billing]).toFixed(2)}/${unit}</td>
+            <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">$${mo.toFixed(2)}/mo</td>
+            <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4">$${(mo*12).toFixed(2)}/yr</td>
+          </tr>`;
+    }).join('');
+    const remTotalMo2 = conRemRows.reduce(function(s,r){ return s + getPlanPrice(r.planId,r.sector)*BILLING_MULT[r.billing]*r.seats; }, 0);
+    const grandTotalMo2 = renewalMo + remTotalMo2;
+    const totalRowHtml2 = conRemRows.length > 0
+      ? `<tr><td style="padding:0.25rem 0.5rem;color:#0f172a;font-weight:700;border-top:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Total</td><td style="border-top:2px solid #a8d5ed;border-right:1px solid #a8d5ed"></td><td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a;border-top:2px solid #a8d5ed;border-right:1px solid #a8d5ed">$${grandTotalMo2.toFixed(2)}/mo</td><td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a;border-top:2px solid #a8d5ed">$${(grandTotalMo2*12).toFixed(2)}/yr</td></tr>`
+      : '';
+    html += `<div class="results-renewal" style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
       <p style="font-size:0.875rem;font-weight:700;color:#1572A8">At Renewal — ${expiryFmt}</p>
       <p style="font-size:0.78rem;color:#126490;margin-top:0.2rem">Transition to <strong>${renewalPlan.name}</strong> (${billingLabel}). Remove interim add-ons.</p>
       <div style="margin-top:0.5rem;border-top:1px solid #a8d5ed;padding-top:0.4rem">
         <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #a8d5ed">
           <thead><tr>
             <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Plan</th>
-            <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Per User</th>
+            <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Per Unit</th>
             <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #a8d5ed;border-right:1px solid #a8d5ed">Monthly</th>
             <th style="text-align:right;padding:0.3rem 0.5rem;color:#1572A8;font-weight:700;border-bottom:2px solid #a8d5ed">Annual</th>
           </tr></thead>
-          <tbody><tr>
-            <td style="padding:0.25rem 0.5rem;color:#4b5563;border-right:1px solid #a8d5ed">${renewalPlan.name}</td>
-            <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-right:1px solid #a8d5ed">$${renewalCPU.toFixed(2)}/user</td>
-            <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1572A8;border-right:1px solid #a8d5ed">$${renewalMo.toFixed(2)}/mo</td>
-            <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1572A8">$${(renewalMo*12).toFixed(2)}/yr</td>
-          </tr></tbody>
+          <tbody>
+          <tr>
+            <td style="padding:0.25rem 0.5rem;color:#4b5563;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">${renewalPlan.name} <span style="color:#9ca3af;font-size:0.7rem">(${users} users)</span></td>
+            <td style="text-align:right;padding:0.25rem 0.5rem;color:#1572A8;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">$${renewalCPU.toFixed(2)}/user</td>
+            <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1572A8;border-bottom:1px solid #cce4f4;border-right:1px solid #a8d5ed">$${renewalMo.toFixed(2)}/mo</td>
+            <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#1572A8;border-bottom:1px solid #cce4f4">$${(renewalMo*12).toFixed(2)}/yr</td>
+          </tr>
+          ${remRowsHtml2}
+          ${totalRowHtml2}
+          </tbody>
         </table>
       </div>
       ${users > 300 ? `<p style="font-size:0.72rem;color:#126490;margin-top:0.35rem">Business Premium capped at 300 users — M365 E3 recommended for ${users} users.</p>` : ''}
     </div>`;
   }
 
-  // Cost summary at renewal
-  html += `<div style="background:#f8fafc;border:1px solid #d1d5db;border-radius:10px;padding:0.85rem 1.1rem">
-    <p style="font-size:0.72rem;font-weight:700;color:#374151;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.07em">At-Renewal Monthly Cost · ${users} users · ${billingLabel}</p>
-    <table style="width:100%;font-size:0.74rem;border-collapse:collapse;border:1px solid #d1d5db">
-      <thead><tr>
-        <th style="text-align:left;padding:0.3rem 0.5rem;color:#6b7280;font-weight:600;border-bottom:2px solid #d1d5db;border-right:1px solid #d1d5db">Plan</th>
-        <th style="text-align:right;padding:0.3rem 0.5rem;color:#374151;font-weight:700;border-bottom:2px solid #d1d5db;border-right:1px solid #d1d5db">Per User</th>
-        <th style="text-align:right;padding:0.3rem 0.5rem;color:#374151;font-weight:700;border-bottom:2px solid #d1d5db;border-right:1px solid #d1d5db">Monthly</th>
-        <th style="text-align:right;padding:0.3rem 0.5rem;color:#374151;font-weight:700;border-bottom:2px solid #d1d5db">Annual</th>
-      </tr></thead>
-      <tbody><tr>
-        <td style="padding:0.25rem 0.5rem;color:#4b5563;border-right:1px solid #d1d5db">${renewalPlan.name}</td>
-        <td style="text-align:right;padding:0.25rem 0.5rem;color:#374151;border-right:1px solid #d1d5db">$${renewalCPU.toFixed(2)}/user</td>
-        <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a;border-right:1px solid #d1d5db">$${renewalMo.toFixed(2)}/mo</td>
-        <td style="text-align:right;padding:0.25rem 0.5rem;font-weight:700;color:#0f172a">$${(renewalMo*12).toFixed(2)}/yr</td>
-      </tr></tbody>
-    </table>
-  </div>`;
-
-  // Reasoning for plan recommendation
+  // Reasoning for plan recommendation — injected above Current Licenses via placeholder
+  let reasonHtml = '';
   if (conReasoning.length > 0) {
     const reasonItems = conReasoning.map(function(r) {
       return '<li style="margin-bottom:0.25rem">' + r + '</li>';
     }).join('');
-    html += '<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:0.75rem 1rem;margin-top:0.75rem">'
-      + '<p style="font-size:0.78rem;font-weight:700;color:#0369a1;margin-bottom:0.35rem">&#128270; Why ' + renewalPlan.name + ' was recommended</p>'
-      + '<ul style="margin:0;padding-left:1.1rem;font-size:0.75rem;color:#374151;line-height:1.6">'
+    reasonHtml = '<div class="results-renewal" style="background:#1B87C9;border:1px solid #1572A8;border-radius:10px;padding:0.75rem 1rem;margin-bottom:1rem">'
+      + '<p style="font-size:0.78rem;font-weight:700;color:#fff;margin-bottom:0.35rem">Why ' + renewalPlan.name + ' is Recommended</p>'
+      + '<ul style="margin:0;padding-left:1.1rem;font-size:0.75rem;color:#fff;line-height:1.6">'
       + reasonItems
       + '</ul>'
       + '</div>';
   }
+  html = html.replace('<!--WHY_PLACEHOLDER-->', reasonHtml);
 
   resultsEl.innerHTML = html;
 }
@@ -3075,9 +3049,9 @@ function buildSecureFeatureTable() {
       html += `<tr>
         <td class="feature-col">${item.component}</td>
         <td class="feature-col" style="color:#6b7280">${item.platform}</td>
-        <td class="${item.watchguard ? 'col-yes' : ''}">${item.watchguard ? '<span class="check-yes">✓</span>' : '<span class="check-no">—</span>'}</td>
-        <td class="${item.protect  ? 'col-yes' : ''}">${item.protect  ? '<span class="check-yes">✓</span>' : '<span class="check-no">—</span>'}</td>
-        <td class="${item.shield   ? 'col-yes' : ''}">${item.shield   ? '<span class="check-yes">✓</span>' : '<span class="check-no">—</span>'}</td>
+        <td class="${item.watchguard ? 'col-yes' : ''}">${item.watchguard ? '<span class="check-yes"></span>' : '<span class="check-no">—</span>'}</td>
+        <td class="${item.protect  ? 'col-yes' : ''}">${item.protect  ? '<span class="check-yes"></span>' : '<span class="check-no">—</span>'}</td>
+        <td class="${item.shield   ? 'col-yes' : ''}">${item.shield   ? '<span class="check-yes"></span>' : '<span class="check-no">—</span>'}</td>
       </tr>`;
     });
   });
@@ -3106,7 +3080,7 @@ function buildPlanner() {
         <input type="checkbox" id="chk-${id}" onchange="onCheck('${id}')">
         <span class="badge badge-${lic.tier}">${lic.tier}</span>
         <label class="lr-name" for="chk-${id}">${lic.name}</label>
-        <span class="lr-price">$${lic.price.toFixed(2)} / ${unit} / mo</span>
+        <span class="lr-price" id="price-${id}" data-base="${lic.price}" data-unit="${unit}">$${lic.price.toFixed(2)} / ${unit} / mo</span>
         <div class="lr-seats-wrap">
           <label for="seats-${id}">${unit === 'room' ? 'Rooms' : 'Seats'}</label>
           <input class="lr-seats" type="number" id="seats-${id}" min="1" value="1" oninput="updateSummary()">
@@ -3130,12 +3104,15 @@ function updateSummary() {
   const mult = getBillingMult();
   let totalMonthly = 0, totalSeats = 0, licCount = 0;
   Object.keys(LICENSES_MAP).forEach(id => {
-    const chk   = document.getElementById('chk-' + id);
-    const seats = parseInt(document.getElementById('seats-' + id).value) || 0;
-    const sub   = document.getElementById('sub-' + id);
+    const chk     = document.getElementById('chk-' + id);
+    const seatsEl = document.getElementById('seats-' + id);
+    const subEl   = document.getElementById('sub-' + id);
+    if (!chk || !seatsEl) return; // plan has no planner row
+    const seats = parseInt(seatsEl.value) || 0;
+    const sub   = subEl;
     if (chk && chk.checked && seats > 0) {
       const lic = LICENSES_MAP[id];
-      const amt = lic.price * mult * seats;
+      const amt = getPlanPrice(id, currentSector) * mult * seats;
       totalMonthly += amt;
       totalSeats += seats;
       licCount++;
@@ -3151,6 +3128,14 @@ function updateSummary() {
   const name = document.getElementById('client-name').value.trim();
   document.getElementById('sum-client').textContent = name || '';
   document.getElementById('go-compare-btn').disabled = licCount < 1;
+
+  // Update per-unit price labels to reflect current billing multiplier
+  document.querySelectorAll('.lr-price[data-base]').forEach(el => {
+    const pid  = el.id.replace('price-', '');
+    const base = pid && LICENSES_MAP[pid] ? getPlanPrice(pid, currentSector) : parseFloat(el.dataset.base);
+    const unit = el.dataset.unit || 'user';
+    el.textContent = '$' + (base * mult).toFixed(2) + ' / ' + unit + ' / mo';
+  });
 }
 
 // ── Build comparison table ─────────────────────────────────────────────────
@@ -3169,7 +3154,7 @@ function buildCompare() {
   selected.forEach(l => {
     const unit = l.unit || 'user';
     html += `<th>${l.name.replace('Microsoft 365 ','M365 ').replace('Office 365 ','O365 ')}<br>
-      <span style="font-weight:400;color:#6b7280;font-size:0.78rem">$${l.price.toFixed(2)}/${unit}/mo</span></th>`;
+      <span style="font-weight:400;color:#6b7280;font-size:0.78rem">$${getPlanPrice(l.id, currentSector).toFixed(2)}/${unit}/mo</span></th>`;
   });
   html += '</tr></thead><tbody>';
 
@@ -3184,7 +3169,7 @@ function buildCompare() {
       if (val === undefined || val === false) {
         html += `<td><span class="check-no">—</span></td>`;
       } else if (val === true) {
-        html += `<td class="col-yes"><span class="check-yes">✓</span></td>`;
+        html += `<td class="col-yes"><span class="check-yes"></span></td>`;
       } else {
         html += `<td class="col-part"><span class="check-partial">${val}</span></td>`;
       }
@@ -3198,7 +3183,7 @@ function buildCompare() {
   html += `<tr style="background:#f8fafc;font-weight:700"><td class="feature-col">Monthly Cost — ${billingLabel}</td>`;
   selected.forEach(l => {
     const seats = parseInt(document.getElementById('seats-' + l.id).value) || 0;
-    html += `<td style="color:#1B87C9">$${(l.price * cmpMult * seats).toFixed(2)}</td>`;
+    html += `<td style="color:#1B87C9">$${(getPlanPrice(l.id, currentSector) * cmpMult * seats).toFixed(2)}</td>`;
   });
   html += '</tr></tbody></table></div>';
 
@@ -3208,10 +3193,11 @@ function buildCompare() {
 
 // ── Tab switching ──────────────────────────────────────────────────────────
 function switchTab(name) {
-  const names = ['secure','planner','advisor','compare','pricing'];
+  const names = ['secure','advisor','planner','compare','pricing'];
   document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', names[i] === name));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
   document.getElementById('billing-bar').style.display = name === 'secure' ? 'none' : '';
+  document.getElementById('sector-bar').style.display  = name === 'secure' ? 'none' : '';
 }
 
 // ── Upgrade Advisor ────────────────────────────────────────────────────────
@@ -3319,8 +3305,8 @@ function runAdvisor() {
   });
 
   const mult        = getBillingMult();
-  const addonCost   = selectedAddons.reduce((s, id) => s + (LICENSES_MAP[id]?.price || 0), 0);
-  const bundleCostPerUser = (baseLic.price + addonCost) * mult;
+  const addonCost   = selectedAddons.reduce((s, id) => s + getPlanPrice(id, currentSector), 0);
+  const bundleCostPerUser = (getPlanPrice(baseId, currentSector) + addonCost) * mult;
   const bundleMonthly     = bundleCostPerUser * seats;
   const bundleAnnual      = bundleMonthly * 12;
 
@@ -3333,7 +3319,7 @@ function runAdvisor() {
       const planCovers = new Set(PLAN_COVERS[pid] || []);
       const covers     = [...needed].filter(id => planCovers.has(id));
       const missing    = [...needed].filter(id => !planCovers.has(id));
-      const altCostPer = LICENSES_MAP[pid].price * mult;
+      const altCostPer = getPlanPrice(pid, currentSector) * mult;
       const altMonthly = altCostPer * seats;
       const diff       = altMonthly - bundleMonthly;
       return { pid, covers, missing, altCostPer, altMonthly, diff };
@@ -3433,7 +3419,8 @@ function runAdvisor() {
 
 // ── NCE Billing ────────────────────────────────────────────────────────────
 const BILLING_MULT = { 'annual-annual': 1.00, 'annual-monthly': 1.05, 'monthly-monthly': 1.20 };
-let currentBilling = 'annual-annual';
+let currentBilling = 'annual-monthly';
+let currentSector  = 'commercial';
 
 function getBillingMult() { return BILLING_MULT[currentBilling]; }
 
@@ -3468,29 +3455,87 @@ function refreshRowPrices(row) {
 
 function setBilling(radio) {
   currentBilling = radio.value;
-  document.querySelectorAll('.billing-opt').forEach(el => {
+  document.querySelectorAll('#billing-bar .billing-opt').forEach(el => {
     el.classList.toggle('selected', el.querySelector('input').value === currentBilling);
   });
   updateCardPrices();
   updateSummary();
   runAdvisor();
+  // Refresh comparison table if one is already showing
+  if (document.querySelector('#compare-section table')) buildCompare();
+}
+
+function setSector(radio) {
+  currentSector = radio.value;
+  document.querySelectorAll('#sector-bar .billing-opt').forEach(el => {
+    el.classList.toggle('selected', el.querySelector('input').value === currentSector);
+  });
+  updateCardPrices();
+  updateSummary();
+  runAdvisor();
+  if (document.querySelector('#compare-section table')) buildCompare();
 }
 
 function updateCardPrices() {
-  // Update static pricing card price-amount spans using stored base prices
   document.querySelectorAll('.price-amount[data-base]').forEach(el => {
-    const base = parseFloat(el.dataset.base);
-    const adj  = base * getBillingMult();
-    el.textContent = base === 0 ? '$0' : '$' + adj.toFixed(2);
+    const sectorBase = el.dataset.planId ? getPlanPrice(el.dataset.planId, currentSector) : parseFloat(el.dataset.base);
+    const adj = sectorBase * getBillingMult();
+    el.textContent = sectorBase === 0 ? '$0' : '$' + adj.toFixed(2);
   });
 }
 
 function initCardPrices() {
-  // Store base price on each price-amount span in the pricing cards tab
   document.querySelectorAll('#tab-pricing .price-amount').forEach(el => {
     const raw = el.textContent.replace(/[^0-9.]/g, '');
     const base = parseFloat(raw);
     if (!isNaN(base)) el.dataset.base = base;
+    // Strip trailing parentheticals (e.g. "(Frontier Suite)"), then try both
+    // full name and M365-abbreviated form since cards use "Microsoft 365 X"
+    // while LICENSES_MAP may use "M365 X" or vice versa.
+    const cardRaw = (el.closest('.card')?.querySelector('.card-name')?.textContent || '')
+      .trim().replace(/\s*\(.*\)\s*$/, '');
+    const cardAlt = cardRaw.replace(/^Microsoft 365 /, 'M365 ');
+    if (cardRaw) {
+      const matchId = Object.keys(LICENSES_MAP).find(id => {
+        const n = LICENSES_MAP[id].name;
+        return n === cardRaw || n === cardAlt;
+      });
+      if (matchId) el.dataset.planId = matchId;
+    }
+  });
+}
+
+// ── Sector price-change badges ─────────────────────────────────────────────
+function buildSectorBadges() {
+  const sectorMap = {
+    nonprofit:  'slbl-nonprofit',
+    education:  'slbl-education',
+    government: 'slbl-government',
+  };
+  Object.entries(sectorMap).forEach(([sector, labelId]) => {
+    const labelEl = document.getElementById(labelId);
+    if (!labelEl || !SECTOR_PRICES[sector]) return;
+    const overrides = SECTOR_PRICES[sector];
+    const ids = Object.keys(overrides);
+    let totalPct = 0, count = 0;
+    ids.forEach(id => {
+      const commercial = LICENSES_MAP[id]?.price || 0;
+      if (commercial === 0) return;
+      totalPct += (overrides[id] - commercial) / commercial * 100;
+      count++;
+    });
+    if (count === 0) return;
+    const avgPct = Math.round(totalPct / count);
+    if (Math.abs(avgPct) < 1) return; // no meaningful change
+    const badge = document.createElement('span');
+    if (avgPct < 0) {
+      badge.className = 'billing-badge billing-badge-base';
+      badge.textContent = 'avg −' + Math.abs(avgPct) + '%';
+    } else {
+      badge.className = 'billing-badge billing-badge-monthly';
+      badge.textContent = 'avg +' + avgPct + '%';
+    }
+    labelEl.appendChild(badge);
   });
 }
 
@@ -3498,6 +3543,7 @@ function initCardPrices() {
 buildPlanner();
 buildAdvisor();
 initCardPrices();
+buildSectorBadges();
 initSecureTab();
 document.getElementById('adv-base').addEventListener('change', () => { refreshAddonList(); });
 document.getElementById('client-name').addEventListener('input', updateSummary);
@@ -3511,10 +3557,10 @@ function toggleDarkMode() {
 function setDarkMode(dark) {
   if (dark) {
     document.documentElement.setAttribute('data-theme', 'dark');
-    document.getElementById('dark-toggle').textContent = '☀️';
+    document.getElementById('dark-toggle').setAttribute('aria-checked', 'true');
   } else {
     document.documentElement.removeAttribute('data-theme');
-    document.getElementById('dark-toggle').textContent = '🌙';
+    document.getElementById('dark-toggle').setAttribute('aria-checked', 'false');
   }
   try { localStorage.setItem('gi_m365_theme', dark ? 'dark' : 'light'); } catch(e) {}
 }
