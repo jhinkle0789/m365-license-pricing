@@ -384,6 +384,24 @@
     [data-theme="dark"] #sec-results p  { color: #cbd5e1 !important; }
     [data-theme="dark"] #sec-results strong { color: #e2e8f0 !important; }
 
+    /* Waste box — red-orange in dark mode */
+    [data-theme="dark"] .results-waste {
+      background: #3b0f0f !important;
+      border-color: #c2410c !important;
+      box-shadow: 0 0 0 1px rgba(251,146,60,0.15);
+    }
+    [data-theme="dark"] .results-waste table {
+      background: #2d0d0d !important;
+      border-color: #c2410c !important;
+    }
+    [data-theme="dark"] .results-waste th {
+      background: #3b0f0f !important;
+      border-color: #c2410c !important;
+    }
+    [data-theme="dark"] .results-waste td {
+      border-color: #7f1d1d !important;
+    }
+
     /* ── Print / PDF ──────────────────────────────────────── */
     .no-print {}
     .print-only { display: none; }
@@ -2335,7 +2353,7 @@ function runSecureAnalysis() {
   if (totalWasteMo > 0) {
     const hasAnnualWaste   = wastedLics.some(l => l.billing !== 'monthly-monthly');
     const hasMonthlyWaste  = wastedLics.some(l => l.billing === 'monthly-monthly');
-    html += `<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
+    html += `<div class="results-waste" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
       <p style="font-size:0.875rem;font-weight:700;color:#991b1b">💸 Unassigned License Waste</p>
       <div style="display:flex;gap:1.5rem;margin-top:0.5rem">
         <div><p style="font-size:0.72rem;color:#9ca3af;margin-bottom:0.1rem">Monthly waste</p><p style="font-size:1rem;font-weight:800;color:#dc2626">$${totalWasteMo.toFixed(2)}</p></div>
