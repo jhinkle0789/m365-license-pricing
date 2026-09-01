@@ -381,23 +381,15 @@
       border-color: #334155 !important;
     }
 
-    /* Inner sub-panels (CA recommendation box, Alternative box, overlap boxes,
-       consolidation sub-boxes) retain their light inline backgrounds.
-       Use dark blue headings + dark grey body so they read on those light bgs. */
-    [data-theme="dark"] #sec-results > div > div > p,
-    [data-theme="dark"] #sec-results > div > div > div > p {
-      color: #374151 !important;
+    /* Recommendation/Alternative inner boxes — light bg, dark text for readability in dark mode */
+    [data-theme="dark"] .inner-light-panel p:first-child { color: #0d3b73 !important; }
+    [data-theme="dark"] .inner-light-panel p             { color: #374151 !important; }
+    [data-theme="dark"] .inner-light-panel strong        { color: #0d3b73 !important; }
+    [data-theme="dark"] .inner-light-panel table td      { color: #374151 !important; }
+    [data-theme="dark"] .inner-light-panel table th {
+      color: #0d3b73 !important;
+      background: rgba(0,0,0,0.05) !important;
     }
-    [data-theme="dark"] #sec-results > div > div > p:first-child,
-    [data-theme="dark"] #sec-results > div > div > div > p:first-child {
-      color: #1e3a5f !important;
-    }
-    [data-theme="dark"] #sec-results > div > div table td { color: #374151 !important; }
-    [data-theme="dark"] #sec-results > div > div table th {
-      color: #1e3a5f !important;
-      background: rgba(0,0,0,0.06) !important;
-    }
-    [data-theme="dark"] #sec-results > div > div strong { color: #1e3a5f !important; }
 
     /* Waste box — vivid red-orange across the whole panel.
        Uses #sec-results in selector to beat the broader #sec-results > div rule. */
@@ -2535,7 +2527,7 @@ function runSecureAnalysis() {
       <p style="font-size:0.875rem;font-weight:700;color:#92400e">⚠ Azure Conditional Access — Action Required</p>
       <p style="font-size:0.8rem;color:#78350f;margin-top:0.2rem">Conditional Access requires at minimum Entra ID P1, which is missing from ${entraNeededRows.map(l => LICENSES_MAP[l.planId].name).join(' and ')}.</p>
       <div style="margin-top:0.75rem;display:flex;flex-direction:column;gap:0.5rem">
-        ${canUpgrade ? `<div style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:8px;padding:0.6rem 0.85rem">
+        ${canUpgrade ? `<div class="inner-light-panel" style="background:#e8f4fb;border:1px solid #a8d5ed;border-radius:8px;padding:0.6rem 0.85rem">
           <p style="font-size:0.8rem;font-weight:700;color:#1572A8">⭐ Recommended — Upgrade to Business Premium (in-place)</p>
           <p style="font-size:0.78rem;color:#126490;margin-top:0.2rem">Microsoft allows in-place upgrades within the current license term — no renewal required.</p>
           <div style="margin-top:0.4rem;border-top:1px solid #a8d5ed;padding-top:0.35rem">
@@ -2571,7 +2563,7 @@ function runSecureAnalysis() {
           </div>
           <p style="font-size:0.72rem;color:#3730a3;margin-top:0.25rem">Business Premium also includes Intune Plan 1 and advanced threat protection.</p>
         </div>` : ''}
-        <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:0.6rem 0.85rem">
+        <div class="inner-light-panel" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:0.6rem 0.85rem">
           <p style="font-size:0.8rem;font-weight:700;color:#374151">${canUpgrade ? 'Alternative' : 'Option'} — Add Entra ID P1</p>
           <p style="font-size:0.78rem;color:#6b7280;margin-top:0.2rem">Add Entra ID P1 to enable Conditional Access without changing the base plan.</p>
           <div style="margin-top:0.4rem;border-top:1px solid #e5e7eb;padding-top:0.35rem">
